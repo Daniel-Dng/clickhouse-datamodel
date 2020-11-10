@@ -1,17 +1,17 @@
 import pandas as pd
 from lib.tab_engines_functions import query_order_by, query_partition_by, query_sample_by, query_settings, query_TTL
 
-sys_tab = pd.read_csv('table_engines.csv', index_col='name').T.to_dict()
+sys_tab = pd.read_csv('../data/table_engines.csv', index_col='name').T.to_dict()
 
 if __name__ == '__main__':
     class TabEngine:
-        def __init__(self, engine_name,
-                     order_columns='', partition_columns='', other_settings='', **kwargs):
+        attributes = ['engine_name', 'partition_columns', 'other_settings', 'order_columns', 'sample_columns', 'ttl']
+
+        def __init__(self, engine_name, **kwargs):
             self.engine_name = engine_name
-            self.order_columns = order_columns
-            self.partition_columns = partition_columns
-            self.other_settings = other_settings
-            ## Other optional attributes
+            self.partition_columns = kwargs.get('partition_columns')
+            self.other_settings = kwargs.get('other_settings')
+            self.order_columns = kwargs.get('order_columns')
             self.sample_columns = kwargs.get('sample_columns')
             self.ttl = kwargs.get('ttl')
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
             self.supports_ttl = sys_tab[self.engine_name]['supports_ttl']
             self.supports_replication = sys_tab[self.engine_name]['supports_replication']
             self.supports_deduplication = sys_tab[self.engine_name]['supports_deduplication']
-            ## Family of Table Engine
+            # Family of Table Engine
             if 'MergeTree' in self.engine_name:
                 self.family = 'MergeTree'
             elif 'Log' in self.engine_name:
@@ -38,23 +38,27 @@ if __name__ == '__main__':
             else:
                 self.family = 'Special'
 
-        # Conditional Attribute:
+        # Conditional Functions:
         def partition_by(self):
             _query = ''
-            if self.partition_columns != '':
+            if self.partition_columns is not None:
                 _query = _query + query_partition_by(self.partition_columns)
-            return _query
-
-        def order_by(self):
-            _query = ''
-            if (self.supports_sort_order == 1) & (self.order_columns != ''):
-                _query = _query + query_order_by(self.order_columns)
             return _query
 
         def sample_by(self):
             _query = ''
             if self.sample_columns is not None:
                 _query = _query + query_sample_by(self.sample_columns)
+            return _query
+
+        def order_by(self):
+            _query = ''
+            if (self.supports_sort_order == 1) & (self.order_columns is not None):
+                _query = _query + query_order_by(self.order_columns)
+            elif self.supports_sort_order == 0:
+                pass
+            else:
+                raise SyntaxError("MergeTree Engines require order_columns and vice versa ")
             return _query
 
         def settings(self):
@@ -65,31 +69,19 @@ if __name__ == '__main__':
 
         def TTL(self):
             _query = ''
-            if self.ttl is not None:
+            if (self.ttl is not None) & (self.supports_ttl == 1):
                 _query = _query + query_TTL(self.ttl)
             return _query
 
         # Full Query Compiler Operations
         def to_query(self):
-            full_query = f'ENGINE {self.engine_name} {self.order_by()} {self.partition_by()} {self.sample_by()} {self.settings()} {self.TTL()}'
+            full_query = f'ENGINE {self.engine_name} {self.order_by()} {self.partition_by()} {self.sample_by()} {self.settings()} {self.TTL()} '
             return full_query
 
-    class MergeTree(TabEngine):
-        def __getattr__(self, attr):
-            return getattr(self.TabEngine, attr)
-        def __init__(self, order_columns, mergetree_type, TabEngine, **kwargs):
-            self.mergetree_type = mergetree_type
-            self.TabEngine = TabEngine
-            # if 'MergeTree' in self.mergetree_type:
-            #     super(MergeTree, self).__init__(self.mergetree_type)
-            # else:
-            #     raise TypeError("The TabEngine is not in MergeTree Family")
-            self.order_columns = order_columns
-            self.partition_columns = kwargs.get('partition_columns')
 
-    # test = TabEngine(engine_name='MySQL', partition_columns='sadf',
-    #                  sample_columns='abc', other_settings='sadf',
+    # test = TabEngine(engine_name='ReplicatedMergeTree',  # partition_columns='sadf',
+    #                  sample_columns='abc', other_settings='sadf', order_columns=['safd', 'asdf'],
     #                  ttl='date + INTERVAL 1 DAY')
-    # test_2 = MergeTree(TabEngine=test, order_columns=['srasd', 'sadfsadf'], mergetree_type='MergeTree',
-    #                    partition_columns=['sadf', 'sadf'])
-    # print('test2: ', test_2.to_query())
+    #
+    # print('test1: ', test.to_query())
+    # print(test.attributes)

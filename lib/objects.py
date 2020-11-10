@@ -1,7 +1,3 @@
-
-from ..lib.tab_engines_functions import *
-from ..data.tab_engines import *
-
 ## OBJECTS
 # class Databases:
 #     attributes = ['name','db_engine']

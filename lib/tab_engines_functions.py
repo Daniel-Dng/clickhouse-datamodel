@@ -13,7 +13,22 @@ def query_order_by(x):
         list_x = str(x).replace('[', '(').replace(']', ')')
         _query = f'ORDER BY {list_x}'
     else:
-        raise TypeError('Only String or List Data Types are Accepted')
+        raise TypeError('Only String or List Data Types are Accepted for order_columns')
+    return _query
+
+
+def pri_key(x):
+    _query = ''
+    if isinstance(x, str):
+        if x == '':
+            _query = ''
+        else:
+            _query = f'PRIMARY KEY {x}'
+    elif isinstance(x, list):
+        list_x = str(x).replace('[', '(').replace(']', ')')
+        _query = f'PRIMARY KEY {list_x}'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for Primary Key')
     return _query
 
 
@@ -28,7 +43,7 @@ def query_partition_by(x):
         list_x = str(x).replace('[', '(').replace(']', ')')
         _query = f'PARTITION BY {list_x}'
     else:
-        raise TypeError('Only String or List Data Types are Accepted for partition by')
+        raise TypeError('Only String or List Data Types are Accepted for partition_columns')
     return _query
 
 
@@ -41,7 +56,7 @@ def query_sample_by(x):
         list_x = str(x).replace('[', '(').replace(']', ')')
         _query = f'SAMPLE BY {list_x}'
     else:
-        raise TypeError('Only String or List Data Types are Accepted for sample by')
+        raise TypeError('Only String or List Data Types are Accepted for sample_columns')
     return _query
 
 
@@ -61,6 +76,7 @@ def query_settings(x):
     else:
         raise TypeError('Only String or List Data Types are Accepted for Settings')
     return _query
+
 
 def query_TTL(x):
     _query = 'TTL '
