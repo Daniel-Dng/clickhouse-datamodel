@@ -87,9 +87,9 @@ if __name__ == '__main__':
             self.order_columns = order_columns
             self.partition_columns = kwargs.get('partition_columns')
 
-    test = TabEngine(engine_name='MySQL', partition_columns='sadf',
-                     sample_columns='abc', other_settings='sadf',
-                     ttl='date + INTERVAL 1 DAY')
-    test_2 = MergeTree(TabEngine=test, order_columns=['srasd', 'sadfsadf'], mergetree_type='MergeTree',
-                       partition_columns=['sadf', 'sadf'])
-    print('test2: ', test_2.to_query())
+    # test = TabEngine(engine_name='MySQL', partition_columns='sadf',
+    #                  sample_columns='abc', other_settings='sadf',
+    #                  ttl='date + INTERVAL 1 DAY')
+    # test_2 = MergeTree(TabEngine=test, order_columns=['srasd', 'sadfsadf'], mergetree_type='MergeTree',
+    #                    partition_columns=['sadf', 'sadf'])
+    # print('test2: ', test_2.to_query())
