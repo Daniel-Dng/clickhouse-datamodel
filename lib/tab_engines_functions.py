@@ -1,6 +1,3 @@
-# import pandas as pd
-# import numpy as np
-
 
 def query_order_by(x):
     _query = ''
@@ -87,6 +84,21 @@ def query_TTL(x):
             _query = _query + x
     else:
         raise TypeError('Only String Data Types are Accepted for TTL')
+    return _query
+
+
+def query_prikey(x):
+    _query = ''
+    if isinstance(x, str):
+        if x == '':
+            _query = ''
+        else:
+            _query = f'PRIMARY KEY {x}'
+    elif isinstance(x, list):
+        list_x = str(x).replace('[', '(').replace(']', ')')
+        _query = f'PRIMARY KEY {list_x}'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for primary_keys')
     return _query
 
 # if __name__ == '__main__':

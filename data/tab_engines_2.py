@@ -1,5 +1,5 @@
 import pandas as pd
-from lib.tab_engines_functions import query_order_by, query_partition_by, query_sample_by, query_settings, query_TTL
+from lib.tab_engines_functions import query_prikey, query_partition_by, query_sample_by, query_settings, query_TTL
 
 sys_tab = pd.read_csv('../data/table_engines.csv', index_col='name').T.to_dict()
 # print(sys_tab_dict)
