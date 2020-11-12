@@ -101,6 +101,17 @@ def query_prikey(x):
         raise TypeError('Only String or List Data Types are Accepted for primary_keys')
     return _query
 
+def query_add_func(obj, func):
+    _query = ''
+    if isinstance(obj, str):
+        if obj != '':
+            _query = f"{func}({obj})"
+    elif isinstance(obj, list):
+        _list_obj = ','.join(obj)
+        _query = f"{func}({_list_obj})"
+    return _query
+
+
 # if __name__ == '__main__':
 #     query_order_by(x)
 #     query_partition_by(x)
