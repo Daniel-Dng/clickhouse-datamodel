@@ -153,4 +153,4 @@ cython_debug/
 !/data/table_functions.csv
 !/data/table_engines.csv
 /data/tab_engines_2.py
-!/json_input
+!/data/json_input
