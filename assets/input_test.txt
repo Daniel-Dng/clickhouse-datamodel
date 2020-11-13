@@ -1,0 +1,76 @@
+database	table	tab_engine	name	type	function	is_nullable	default_expression	is_in_partition_key	is_in_sorting_key	is_in_primary_key	is_in_sampling_key	compression_codec
+entities	payment_systems	MergeTree	ps_id	UInt8		0		1	1	1		
+entities	payment_systems	MergeTree	ps_name	String		0						
+entities	payment_systems	MergeTree	ps_payment_period	UInt8	toTypeName	0						LZ4HC
+entities	payment_systems	MergeTree	ps_admin_type	UInt8		0						
+entities	payment_systems	MergeTree	ps_type	UInt8		0					1	Default
+entities	payment_systems	MergeTree	ps_active	UInt8		0	0		1		0	
+entities	payment_systems	MergeTree	ps_default	UInt8		0	0					LZ4
+entities	payment_systems	MergeTree	ps_mask_virtual_currency	UInt8		0	0		1	1		
+entities	payment_systems	MergeTree	ps_accounting_parent_id	UInt8		0			1		1	
+entities	payment_systems	MergeTree	ps_risky	UInt8		0	0					Default
+entities	payment_systems	MergeTree	ps_third_party	UInt8	intHash32	0	0				0	
+entities	payment_systems	MergeTree	ps_api_details	UInt8		0	0					
+entities	payment_systems	MergeTree	ps_expand_countries	UInt8		1	0			1		
+entities	payment_systems	MergeTree	ps_fee_resolve_strategy	"Enum('only_ps' = 1, 'ps_and_country' = 2, 'ps_and_currency' = 3)"		0	only_ps		1			
+entities	payment_systems	MergeTree	ps_collect_fee_on_chargeback	"Enum('full' = 1, 'percent_only' = 2, 'none' = 3)"		0	full					Default
+entities	payment_systems	MergeTree	ps_collect_fee_on_refund	"Enum('full' = 1, 'percent_only' = 2, 'none' = 3)"		0	full				1	
+entities	payment_systems	MergeTree	ps_collect_fee_on_reversal	"Enum('full' = 1, 'percent_only' = 2, 'none' = 3)"		0	full		1		1	
+entities	payment_systems	MergeTree	ps_collect_fee_on_reversal_cancellation	"Enum('full' = 1, 'percent_only' = 2, 'none' = 3)"		0	none					
+entities	payment_systems	MergeTree	ps_good_rates	UInt8		1					1	
+entities	payment_systems	MergeTree	ps_parent_name	UInt8		1					1	LZ4
+entities	payment_systems	MergeTree	ps_mint_refundable	UInt8		0	0					
+entities	payment_systems	MergeTree	ps_non_chargebackable	UInt8		0	0					Default
+entities	payment_systems	MergeTree	ps_visible_to_merchant	UInt8		0	0					
+entities	payment_systems	MergeTree	ps_onboarding_required	UInt8	xxHash32	0	0					LZ4HC
+entities	payment_systems	MergeTree	pm_id	UInt8		1	0	1				
+data-modeling	clicks	ReplicatedMergeTree	click_id	Int32					1	1		Default
+data-modeling	clicks	ReplicatedMergeTree	user_id	Int32								
+data-modeling	clicks	ReplicatedMergeTree	ps_id	Int32					1			
+data-modeling	clicks	ReplicatedMergeTree	widget_session_id	Int32								
+data-modeling	clicks	ReplicatedMergeTree	widget_id	Int32								Default
+data-modeling	clicks	ReplicatedMergeTree	project_Id	Int32								
+data-modeling	clicks	ReplicatedMergeTree	time_created	DateTime	toYYYYMM			1				
+data-modeling	clicks	ReplicatedMergeTree	time_tracked	DateTime	toYYYYMMDD	1		1				
+data-modeling	clicks	ReplicatedMergeTree	co_id	Int32					1			Default
+data-modeling	clicks	ReplicatedMergeTree	external_click_id	String		1						
+data-modeling	clicks	ReplicatedMergeTree	recurring_id	Int32							1	
+data-modeling	clicks	ReplicatedMergeTree	ps_acc_id	Int32							0	
+data-modeling	clicks	ReplicatedMergeTree	promo_Id	Int32		1						
+data-modeling	clicks	ReplicatedMergeTree	pss_id	Int32		1						
+data-modeling	clicks	ReplicatedMergeTree	product_id	Int32							1	
+data-modeling	clicks	ReplicatedMergeTree	click_ip_address	Int32		1						Default
+data-modeling	clicks	ReplicatedMergeTree	umi_Id	String							0	
+data-modeling	clicks	ReplicatedMergeTree	cu_id	Int32								
+data-modeling	clicks	ReplicatedMergeTree	paid_cu_id	Int32		1			1			
+data-modeling	clicks	ReplicatedMergeTree	display_amount	Float32	xxHash32	1			0			
+data-modeling	clicks	ReplicatedMergeTree	paid_amount	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	paid_amount_usd	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	merchant_revenue	Float32		1			1			
+data-modeling	clicks	ReplicatedMergeTree	merchant_revenue_usd	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	rolling_reserve	Float32	xxHash64	1			0			
+data-modeling	clicks	ReplicatedMergeTree	rolling_reserve_usd	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	ps_fee	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	ps_fee_usd	Float32		1						
+data-modeling	clicks	ReplicatedMergeTree	revenue	Float32		1						LZ4HC
+data-modeling	clicks	ReplicatedMergeTree	revenue_usd	Float32		1						
+entities	clicks	Log	click_id	Int32					1	1		Default
+entities	clicks	Log	user_id	Int32								
+entities	clicks	Log	ps_id	Int32					1			
+entities	clicks	Log	widget_session_id	Int32								
+entities	clicks	Log	widget_id	Int32								Default
+entities	clicks	Log	project_Id	Int32								
+entities	clicks	Log	time_created	DateTime	toYYYYMM			1				
+entities	clicks	Log	time_tracked	DateTime	toYYYYMM	1		1				
+entities	clicks	Log	co_id	Int32					1			Default
+entities	clicks	Log	external_click_id	String		1						
+entities	clicks	Log	recurring_id	Int32							1	
+entities	clicks	Log	ps_acc_id	Int32							0	
+entities	clicks	Log	promo_Id	Int32		1						
+entities	clicks	Log	pss_id	Int32		1						
+entities	clicks	Log	product_id	Int32	xxHash64						1	
+entities	clicks	Log	click_ip_address	Int32		1						Default
+entities	clicks	Log	umi_Id	String							0	
+entities	clicks	Log	cu_id	Int32								
+entities	clicks	Log	paid_cu_id	Int32		1			1			
+entities	clicks	Log	display_amount	Float32		1			0			

@@ -1,22 +1,21 @@
 import csv
 import pandas as pd
-import pprint
+# import pprint
 
-try:
-    import importlib.resources as pkg_resources
-except ImportError:
-    # Try backported to PY<37 `importlib_resources`.
-    import importlib_resources as pkg_resources
+import pkgutil
 
 
-template = pkg_resources.read_text(asset, 'input_test.csv')
-print(template)
-# or for a file-like stream:
-# template = pkg_resources.open_text(templates, 'temp_file')
+# file = pkgutil.get_data('assets', 'column_input.txt').decode('utf-8')
+# data = pd.DataFrame([line.split('\t') for line in file.split('\r\n')])
+# data = data.rename(columns=data.iloc[0]).drop(data.index[0])#.set_index('name').T.to_dict()
+# print(data)
+# dict= {}
+# dict[data.columns[0]] =
 
 class Extractor:
     def __init__(self, file):
         self.file = file
+
     @classmethod
     def csv_to_dict(cls, path):
         return cls(pd.read_csv(path, index_col='name').T.to_dict())
@@ -29,6 +28,17 @@ class Extractor:
                 data.append(line)
             file.close()
         return cls(data)
-#
-# input_test = Extractor.csv_to_dict2('../data/input_test.csv').file
-# pprint.pprint(input_test[0])
+
+    @classmethod
+    def txt_to_dict(cls, packages, path):
+        file = pkgutil.get_data(packages, path).decode('utf-8')
+        data = pd.DataFrame([line.split('\t') for line in file.split('\r\n')])
+        data = data.rename(columns=data.iloc[0]).drop(data.index[0])#.set_index('name')
+        mydict = data.T.to_dict()
+        # newdict = {}
+        # for x in mydict:
+        #     new_key = f"{mydict[x]['database']}.{mydict[x]['table']}.{mydict[x]['name']}"
+        #     newdict[new_key] = mydict[x]
+        return cls(data)
+
+
