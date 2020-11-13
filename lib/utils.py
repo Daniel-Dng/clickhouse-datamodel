@@ -33,8 +33,8 @@ class Extractor:
     def txt_to_dict(cls, packages, path):
         file = pkgutil.get_data(packages, path).decode('utf-8')
         data = pd.DataFrame([line.split('\t') for line in file.split('\r\n')])
-        data = data.rename(columns=data.iloc[0]).drop(data.index[0])
-        # data = data.T.to_dict()
+        data = data.rename(columns=data.iloc[0]).drop(data.index[0])#.set_index('name')
+        mydict = data.T.to_dict()
         # newdict = {}
         # for x in mydict:
         #     new_key = f"{mydict[x]['database']}.{mydict[x]['table']}.{mydict[x]['name']}"
@@ -42,5 +42,3 @@ class Extractor:
         return cls(data)
 
 
-input_test = Extractor.txt_to_dict('assets', 'input_test.csv').file
-print(input_test)
