@@ -1,3 +1,4 @@
+# import pandas as pd
 def query_add_func(obj, func):
     _query = ''
     if isinstance(obj, str):
@@ -7,7 +8,7 @@ def query_add_func(obj, func):
         _list_obj = ','.join(obj)
         _query = f"{func}({_list_obj})"
     return _query
-
+# print(query_add_func('ps_id','Nullable'))
 
 def query_order_by(x):
     _query = ''
@@ -106,14 +107,17 @@ def query_prikey(x):
     return _query
 
 
-def query_columns(col, type, function=''):
+def query_columns(col, data_type, function=''):
     _query = ''
     if function != '':
-        type = query_add_func(type, function)
+        data_type = query_add_func(data_type, function)
     if isinstance(col, str):
-        _query = _query + col + type
-
+        _query = _query + col + ' ' + data_type
+    # elif isinstance(col, list) & isinstance(data_type, list):
+    #     pd.DataFrame(columns=['col','data_type'],data=)
     else:
-        raise TypeError('Only String or List Data Types are Accepted for Settings')
+        raise TypeError('Only String or List data types are accepted for columns')
     return _query
+
+
 
