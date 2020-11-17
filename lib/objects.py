@@ -1,30 +1,30 @@
 # from lib.tab_engines import TabEngine
-# import pandas as pd
-from lib.functions import (query_TTL, query_prikey, query_settings,
-                           query_sample_by, query_partition_by, query_add_func,
-                           query_order_by, query_columns)
-from lib.utils import Extractor
+from lib.functions import (query_columns)
 
 
 ## OBJECTS
 class Database:
     def __init__(self, name):
         self.name = name
+        self.table_name = ''
+
+    def add_table(self, table_name):
+        self.table_name = table_name
+        return self
 
 
 class Tables:
     class Columns:
         def __init__(self, name, datatype, function='', is_in_primary_key=0, is_in_sorting_key=0,
-                     is_in_partition_key=0, compression_codec='', is_in_sampling_key=0):
+                     is_in_partition_key=0, is_in_sampling_key=0):
             self.name = name
             self.datatype = datatype
             self.function = function
             self.is_in_sorting_key = is_in_sorting_key
             self.is_in_primary_key = is_in_primary_key
             self.is_in_partition_key = is_in_partition_key
-            self.compression_codec = compression_codec
+            # self.compression_codec = compression_codec
             self.is_in_sampling_key = is_in_sampling_key
-            # self.full_query = f"{self.name} {self.datatype}"
 
         # @staticmethod
         # def add_func(datatype,):
@@ -129,5 +129,4 @@ class Tables:
 #                  is_in_partition_key=0, compression_codec='', is_in_sampling_key=0):
 #         super().__init__(name, datatype, function, 1, 1,
 #                          is_in_partition_key, compression_codec, is_in_sampling_key)
-
-
+# Suppose this is foo.py.

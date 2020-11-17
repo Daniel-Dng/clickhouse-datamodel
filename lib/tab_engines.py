@@ -8,10 +8,9 @@ class TabEngine(Tables):
     sys_dict = Extractor.txt_to_dict('assets', 'table_engines.txt').file ## system tables from ClickHouse
     def __init__(self, engine_name):
         self.engine_name = engine_name
-        self.full_query = f"{engine_name} "
         self.order_col = ''
         self.partition_col = ''
-        self.primary_col = ''
+        self.pri_key = ''
         self.sample_col = ''
         self.ttl = ''
         self.settings = ''
@@ -20,14 +19,11 @@ class TabEngine(Tables):
         return f"ENGINE {self.engine_name} " \
                f"{self.order_col} " \
                f"{self.partition_col} " \
-               f"{self.primary_col} " \
-               f"{self.sample_col} " \
+               f"{self.pri_key} " \
                f"{self.sample_col} " \
                f"{self.settings} " \
                f"{self.ttl}"
-
-    # @staticmethod
-    #     sys_tab[self.engine_name]['supports_sort_order']
+    # decorator
     # def check_condition(condition):
     #     if condition == 1:
     #         return 1
@@ -41,14 +37,15 @@ class TabEngine(Tables):
             raise ValueError('Table Engine does not support sort order')
         return self
 
+    def add_prikey(self, col):
+        self.pri_key = query_prikey(col)
+        return self
 
-    # @staticmethod
     def add_partition(self, col):
         if 'MergeTree' in self.engine_name:
             self.partition_col = query_partition_by(col)
         return self
 
-    # @staticmethod
     def add_settings(self, setting):
         if self.sys_dict[self.engine_name]['supports_settings'] == '1':
             self.order_col = query_settings(setting)
@@ -56,11 +53,9 @@ class TabEngine(Tables):
             raise ValueError('Table Engine does not support settings')
         return self
 
-
     def add_sample(self, col):
         self.sample_col = query_sample_by(col)
         return self
-
 
     def add_ttl(self, col):
         if self.sys_dict[self.engine_name]['supports_ttl'] == '1':
@@ -69,4 +64,4 @@ class TabEngine(Tables):
             raise ValueError('Table Engine does not support settings')
         return self
 
-
+# TODO: add more subclasses for specific engines
