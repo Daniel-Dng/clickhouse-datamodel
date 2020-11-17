@@ -144,6 +144,6 @@ cython_debug/
 !/main.py
 !/__init__.py
 !/README.md
-/assets/tab_engines_2.py
-/assets/json_input_2
 !/requirements.txt
+/assets/json_input_2
+/assets/table_engines.txt
