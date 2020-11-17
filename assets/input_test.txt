@@ -29,18 +29,18 @@ data-modeling	clicks	ReplicatedMergeTree	user_id	Int32
 data-modeling	clicks	ReplicatedMergeTree	ps_id	Int32					1			
 data-modeling	clicks	ReplicatedMergeTree	widget_session_id	Int32								
 data-modeling	clicks	ReplicatedMergeTree	widget_id	Int32								Default
-data-modeling	clicks	ReplicatedMergeTree	project_Id	Int32								
+data-modeling	clicks	ReplicatedMergeTree	project_id	Int32
 data-modeling	clicks	ReplicatedMergeTree	time_created	DateTime	toYYYYMM			1				
 data-modeling	clicks	ReplicatedMergeTree	time_tracked	DateTime	toYYYYMMDD	1		1				
 data-modeling	clicks	ReplicatedMergeTree	co_id	Int32					1			Default
 data-modeling	clicks	ReplicatedMergeTree	external_click_id	String		1						
 data-modeling	clicks	ReplicatedMergeTree	recurring_id	Int32							1	
 data-modeling	clicks	ReplicatedMergeTree	ps_acc_id	Int32							0	
-data-modeling	clicks	ReplicatedMergeTree	promo_Id	Int32		1						
+data-modeling	clicks	ReplicatedMergeTree	promo_id	Int32		1
 data-modeling	clicks	ReplicatedMergeTree	pss_id	Int32		1						
 data-modeling	clicks	ReplicatedMergeTree	product_id	Int32							1	
 data-modeling	clicks	ReplicatedMergeTree	click_ip_address	Int32		1						Default
-data-modeling	clicks	ReplicatedMergeTree	umi_Id	String							0	
+data-modeling	clicks	ReplicatedMergeTree	umi_id	String							0
 data-modeling	clicks	ReplicatedMergeTree	cu_id	Int32								
 data-modeling	clicks	ReplicatedMergeTree	paid_cu_id	Int32		1			1			
 data-modeling	clicks	ReplicatedMergeTree	display_amount	Float32	xxHash32	1			0			
@@ -54,23 +54,23 @@ data-modeling	clicks	ReplicatedMergeTree	ps_fee	Float32		1
 data-modeling	clicks	ReplicatedMergeTree	ps_fee_usd	Float32		1						
 data-modeling	clicks	ReplicatedMergeTree	revenue	Float32		1						LZ4HC
 data-modeling	clicks	ReplicatedMergeTree	revenue_usd	Float32		1						
-entities	clicks	Log	click_id	Int32					1	1		Default
-entities	clicks	Log	user_id	Int32								
-entities	clicks	Log	ps_id	Int32					1			
-entities	clicks	Log	widget_session_id	Int32								
-entities	clicks	Log	widget_id	Int32								Default
-entities	clicks	Log	project_Id	Int32								
-entities	clicks	Log	time_created	DateTime	toYYYYMM			1				
-entities	clicks	Log	time_tracked	DateTime	toYYYYMM	1		1				
-entities	clicks	Log	co_id	Int32					1			Default
-entities	clicks	Log	external_click_id	String		1						
-entities	clicks	Log	recurring_id	Int32							1	
-entities	clicks	Log	ps_acc_id	Int32							0	
-entities	clicks	Log	promo_Id	Int32		1						
-entities	clicks	Log	pss_id	Int32		1						
-entities	clicks	Log	product_id	Int32	xxHash64						1	
-entities	clicks	Log	click_ip_address	Int32		1						Default
-entities	clicks	Log	umi_Id	String							0	
-entities	clicks	Log	cu_id	Int32								
-entities	clicks	Log	paid_cu_id	Int32		1			1			
-entities	clicks	Log	display_amount	Float32		1			0			
+entities	clicks	MergeTree	click_id	Int32					1	1		Default
+entities	clicks	MergeTree	user_id	Int32								
+entities	clicks	MergeTree	ps_id	Int32					1			
+entities	clicks	MergeTree	widget_session_id	Int32								
+entities	clicks	MergeTree	widget_id	Int32								Default
+entities	clicks	MergeTree	project_id	Int32
+entities	clicks	MergeTree	time_created	DateTime	toYYYYMM			1				
+entities	clicks	MergeTree	time_tracked	DateTime	toYYYYMM	1		1				
+entities	clicks	MergeTree	co_id	Int32					1			Default
+entities	clicks	MergeTree	external_click_id	String		1						
+entities	clicks	MergeTree	recurring_id	Int32							1	
+entities	clicks	MergeTree	ps_acc_id	Int32							0	
+entities	clicks	MergeTree	promo_id	Int32		1
+entities	clicks	MergeTree	pss_id	Int32		1						
+entities	clicks	MergeTree	product_id	Int32	xxHash64						1	
+entities	clicks	MergeTree	click_ip_address	Int32		1						Default
+entities	clicks	MergeTree	umi_id	String							0
+entities	clicks	MergeTree	cu_id	Int32								
+entities	clicks	MergeTree	paid_cu_id	Int32		1			1			
+entities	clicks	MergeTree	display_amount	Float32		1			0

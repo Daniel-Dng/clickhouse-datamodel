@@ -144,13 +144,6 @@ cython_debug/
 !/main.py
 !/__init__.py
 !/README.md
-!/data/systab_columns.csv
-!/data/merge_tree_settings.csv
-!/data/functions.csv
-!/data/settings.csv
-!/data/privileges.csv
-!/data/data_type_families.csv
-!/data/table_functions.csv
-!/data/table_engines.csv
-/data/tab_engines_2.py
-!/data/json_input
+/assets/tab_engines_2.py
+/assets/json_input_2
+!/requirements.txt
