@@ -1,65 +1,52 @@
 # from PyQt5.QtWidgets import *
 # from PyQt5.QtCore import *
-# from  PyQt5 import QtGui,QtCore
+# from PyQt5.QtGui import *
+#
+# # Only needed for access to command line arguments
 # import sys
 #
 #
-# class ColumnArea(QWidget):
-#     def __init__(self, parent=None):
-#         super(ColumnArea, self).__init__(parent)
-#         self._col = QLabel('Column Name')
-#         self._col.setFixedSize(80, 20)
-#         self._col.setAlignment(Qt.AlignRight)
-#         self._entry_col = QLineEdit()
-#         self._entry_col.setFixedSize(100, 20)
+# class MainWindow(QMainWindow):
 #
-#         self._nullable = QCheckBox('Nullable')
-#         self._nullable.setFixedSize(100, 20)
-#         # self._nullable.setFont()
+#     def __init__(self, *args, **kwargs):
+#         super(MainWindow, self).__init__(*args, **kwargs)
 #
-#         self._datatype = QLabel('Data Type')
-#         self._datatype.setFixedSize(50, 20)
-#         self._datatype.setAlignment(Qt.AlignRight)
-#         self._entry_datatype = QLineEdit()
-#         self._entry_datatype.setFixedSize(100, 20)
+#         self.setWindowTitle("My Awesome App")
 #
-#         self._func = QLabel('Function')
-#         self._func.setFixedSize(50, 20)
-#         self._func.setAlignment(Qt.AlignRight)
-#         self._entry_func = QLineEdit()
-#         self._entry_func.setFixedSize(100, 20)
+#         widget = QLineEdit()
+#         widget.setMaxLength(10)
+#         widget.setPlaceholderText("Enter your text")
 #
-#         self._codec = QLabel('CODEC')
-#         self._codec.setFixedSize(50, 20)
-#         self._codec.setAlignment(Qt.AlignRight)
-#         self._entry_codec = QLineEdit()
-#         self._entry_codec.setFixedSize(100, 20)
+#         #widget.setReadOnly(True) # uncomment this to make readonly
+#
+#         widget.returnPressed.connect(self.return_pressed)
+#         widget.selectionChanged.connect(self.selection_changed)
+#         widget.textChanged.connect(self.text_changed)
+#         widget.textEdited.connect(self.text_edited)
+#
+#         self.setCentralWidget(widget)
 #
 #
-#         layout = QHBoxLayout()
-#         layout.addWidget(self._col)
-#         layout.addWidget(self._entry_col)
-#         layout.addWidget(self._nullable)
-#         layout.addWidget(self._datatype)
-#         layout.addWidget(self._entry_datatype)
-#         layout.addWidget(self._func)
-#         layout.addWidget(self._entry_func)
-#         layout.addWidget(self._codec)
-#         layout.addWidget(self._entry_codec)
-#         self.setLayout(layout)
+#     def return_pressed(self):
+#         print("Return pressed!")
+#         self.centralWidget().setText("BOOM!")
 #
+#     def selection_changed(self):
+#         print("Selection changed")
+#         print(self.centralWidget().selectedText())
 #
+#     def text_changed(self, s):
+#         print("Text changed...")
+#         print(s)
 #
-# class Main(QMainWindow):
-#     def __init__(self, parent = None):
-#         super(Main, self).__init__(parent)
-#
-#         # main button
-#         self.column = ColumnArea(self)
-#
-#
-#
+#     def text_edited(self, s):
+#         print("Text edited...")
+#         print(s)
 # app = QApplication(sys.argv)
-# myWidget = Main()
-# myWidget.show()
+#
+# window = MainWindow()
+# window.show() # IMPORTANT!!!!! Windows are hidden by default.
+#
+# # Start the event loop.
 # app.exec_()
+#
