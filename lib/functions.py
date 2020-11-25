@@ -1,4 +1,3 @@
-# import pandas as pd
 def query_add_func(obj, func):
     _query = ''
     if isinstance(obj, str):
@@ -8,15 +7,15 @@ def query_add_func(obj, func):
         _list_obj = ','.join(obj)
         _query = f"{func}({_list_obj})"
     return _query
-# print(query_add_func('String','Nullable'))
+
 
 def query_order_by(x):
     _query = ''
     if isinstance(x, str):
-        if x == '':
-            _query = ''
-        else:
+        if x.strip() != '':
             _query = f'ORDER BY ({x})'
+        else:
+            _query = ''
     elif isinstance(x, list):
         list_x = ','.join(x)
         _query = f'ORDER BY ({list_x})'
@@ -43,9 +42,7 @@ def pri_key(x):
 def query_partition_by(x):
     _query = ''
     if isinstance(x, str):
-        if x == '':
-            _query = ''
-        else:
+        if x != '':
             _query = f'PARTITION BY ({x})'
     elif isinstance(x, list):
         list_x = ','.join(x)
@@ -69,12 +66,12 @@ def query_sample_by(x):
 
 
 def query_settings(x):
-    _query = 'SETTINGS '
+    _query = ''
     if isinstance(x, str):
         if x != '':
-            _query = _query + x
+            _query = 'SETTINGS ' + x
     elif isinstance(x, list):
-        _query = ','.join(x)
+        _query = 'SETTINGS ' + ','.join(x)
     else:
         raise TypeError('Only String or List Data Types are Accepted for Settings')
     return _query
@@ -111,7 +108,7 @@ def query_columns(col, data_type, function=''):
     _query = ''
     data_type = data_type.strip()
     col = col.strip()
-    function = function.strip()
+    function = function
     if function != '':
         data_type = query_add_func(data_type, function)
     if isinstance(col, str):
@@ -121,6 +118,3 @@ def query_columns(col, data_type, function=''):
     else:
         raise TypeError('Only String or List data types are accepted for columns')
     return _query
-
-
-

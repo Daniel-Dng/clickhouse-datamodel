@@ -9,3 +9,5 @@ style==1.1.0
 tzlocal==2.1
 update==0.0.1
 wincertstore==0.2
+
+pyqt5~=5.15.1
