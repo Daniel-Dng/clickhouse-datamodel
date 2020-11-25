@@ -1,1 +1,1 @@
-# clickhouse-datamodel
+# ClickHouse Query Builder

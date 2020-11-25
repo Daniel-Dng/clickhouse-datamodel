@@ -145,5 +145,4 @@ cython_debug/
 !/__init__.py
 !/README.md
 !/requirements.txt
-/assets/json_input_2
-/assets/table_engines.txt
+/assets/merge_tree_settings.csv

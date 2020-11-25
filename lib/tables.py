@@ -52,12 +52,12 @@ class Tables:
         self.ttl = kwargs.get('ttl')
 
     def __str__(self):
-        return "CREATE TABLE IF NOT EXISTS {}{} " \
-               "({}) " \
-               "{} ;".format(self.database,
-                             self.name,
-                             ','.join(self.columns),
-                             self.tab_engine)
+        return "CREATE TABLE IF NOT EXISTS {}{}\n" \
+               "(\n{}\n)\n" \
+               "{}\n;".format(self.database,
+                              self.name,
+                              ',\n'.join(self.columns),
+                              self.tab_engine)
 
     def add_columns(self, col, datatype='', function=''):
         if datatype != '':
@@ -66,7 +66,13 @@ class Tables:
             self.columns.append(col)
         return self
 
+    def rmv_columns(self, col, datatype='', function=''):
+        if datatype != '':
+            self.columns.remove(query_columns(col, datatype, function))
+        else:
+            self.columns.remove(col)
+        return self
+
     def add_engine(self, engine_name):
         self.tab_engine = engine_name
         return self
-

@@ -1,7 +1,7 @@
 import pandas as pd
 from lib.functions import query_prikey, query_partition_by, query_sample_by, query_settings, query_TTL,query_order_by
 from lib.utils import Extractor
-from lib.objects import Tables
+from lib.tables import Tables
 
 
 class TabEngine(Tables):
@@ -23,18 +23,12 @@ class TabEngine(Tables):
                f"{self.sample_col} " \
                f"{self.settings} " \
                f"{self.ttl}"
-    # decorator
-    # def check_condition(condition):
-    #     if condition == 1:
-    #         return 1
-    #     else:
-    #         return 0
 
     def add_order(self, col):
         if self.sys_dict[self.engine_name]['supports_sort_order'] == '1':
             self.order_col = query_order_by(col)
-        else:
-            raise ValueError('Table Engine does not support sort order')
+        # else:
+        #     raise ValueError('Table Engine does not support sort order')
         return self
 
     def add_prikey(self, col):
@@ -48,9 +42,9 @@ class TabEngine(Tables):
 
     def add_settings(self, setting):
         if self.sys_dict[self.engine_name]['supports_settings'] == '1':
-            self.order_col = query_settings(setting)
-        else:
-            raise ValueError('Table Engine does not support settings')
+            self.settings = query_settings(setting)
+        # else:
+        #     raise ValueError('Table Engine does not support settings')
         return self
 
     def add_sample(self, col):
@@ -60,8 +54,8 @@ class TabEngine(Tables):
     def add_ttl(self, col):
         if self.sys_dict[self.engine_name]['supports_ttl'] == '1':
             self.ttl = query_TTL(col)
-        else:
-            raise ValueError('Table Engine does not support settings')
+        # else:
+        #     raise ValueError('Table Engine does not support settings')
         return self
 
 # TODO: add more subclasses for specific engines
