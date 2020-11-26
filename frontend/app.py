@@ -1,11 +1,11 @@
-# import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 # from PyQt5.QtGui import *
 from frontend.column_widget import ColumnWidget
 from lib.tables import Tables
 from lib.tab_engines import TabEngine
-from lib.utils import Extractor
+from lib.extractors import Extractor
+from lib.utils import query_add_func
 
 tab_engine_options = list(Extractor.txt_to_dict('assets', 'table_engines.txt').file.keys())
 tab_engine_options.sort()
@@ -90,29 +90,32 @@ class App(QMainWindow):
         self.scrollLayout = QFormLayout()
         self.scrollWidget = QWidget()
         self.scrollWidget.setLayout(self.scrollLayout)
-        # self.col_layout = QVBoxLayout(self)
         # scroll area widget contents
         self.scrollArea = QScrollArea(self)  # Scroll Area which contains the widgets
         self.scrollArea.setGeometry(QRect(50, 150, 900, 250))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.scrollWidget)
         # self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        # self.scrollArea.setLayout(self.col_layout)
-        # self.col_widget = QWidget(self)
-        # self.col_widget.setLayout(self.col_layout)
-        # self.scrollArea.setWidget(self.col_widget)
-
+        ## Make the first ColumnWidget visible
         self._column = ColumnWidget(self)
         self.scrollLayout.addRow(self._column)
 
         # FOOTER
-        self.result_query = QPlainTextEdit(self)
-        self.result_query.setGeometry(QRect(50, 425, 900, 150))
+        self.footer = QWidget(self)
+        footer_layout = QVBoxLayout()
+        self.footer.setLayout(footer_layout)
+        self.footer.setGeometry(QRect(50, 425, 900, 200))
+        ## footer widgets
+        self.result_query = QPlainTextEdit()
+        self.result_query.setFixedSize(888, 150)
+        # self.result_query.setGeometry(QRect(50, 425, 900, 150))
         self.result_query.setStyleSheet("border :3px solid black")
-
-        self.createButton = QPushButton('CREATE', self)
-        self.createButton.setGeometry(QRect(50, 600, 100, 20))
+        self.createButton = QPushButton('CREATE')
+        # self.createButton.setGeometry(QRect(50, 600, 100, 20))
         self.createButton.clicked.connect(self.create_table)
+
+        footer_layout.addWidget(self.result_query, alignment=Qt.AlignCenter)
+        footer_layout.addWidget(self.createButton, alignment=Qt.AlignLeft)
 
         # Other variables
         # _new_tab_engine = TabEngine(self.tab_engine_box.currentText())
@@ -120,6 +123,11 @@ class App(QMainWindow):
         # _new_tab = Tables(name=self.entry_tab.text(),
         #                        database=self.entry_db.text(),
         #                        tab_engine=_new_tab_engine)
+
+        # self.shortcut_create = QShortcut(self)
+        # self.shortcut_create.setKey("Ctrl+C")
+        # self.shortcut_create.activated.connect(self.create_table)
+
         self.show()
 
     def addColumn(self):
@@ -131,32 +139,46 @@ class App(QMainWindow):
 
     def create_table(self):
         _new_tab = Tables(name=self.entry_tab.text(),
-                          database=self.entry_db.text()
-                          )
+                          database=self.entry_db.text())
         _new_tab_engine = TabEngine(self.tab_engine_box.currentText())
         partitioned_cols = []
         ordered_col = []
         sampled_cols = []
-        for col_widget in self.scrollWidget.children():
-            if isinstance(col_widget, ColumnWidget):
-                if str(col_widget.children()[2].text()).strip() != '':
-                    _new_tab.add_columns(str(col_widget.new_col))
-                    for child_widget in col_widget.findChildren(QCheckBox):
-                        if child_widget.isChecked():
-                            if child_widget.objectName() == '_partitioned':
-                                partitioned_cols.append(col_widget.children()[2].text())
-                                _new_tab_engine.add_partition(partitioned_cols)
-                            elif child_widget.objectName() == '_sampled':
-                                sampled_cols.append(col_widget.children()[2].text())
-                                _new_tab_engine.add_sample(sampled_cols)
-                            elif child_widget.objectName() == '_ordered':
-                                ordered_col.append(col_widget.children()[2].text())
-                                _new_tab_engine.add_order(ordered_col)
+        for col_widget in self.scrollWidget.findChildren(ColumnWidget):
+            col_name = col_widget.findChild(QLineEdit, 'col_name').text()
+            if str(col_name).strip() != '':
+                _new_tab.add_columns(str(col_widget.new_col))
+                for child_widget in col_widget.findChildren(QCheckBox):
+                    if child_widget.isChecked():
+                        if child_widget.objectName() == '_partitioned':
+                            if (child_widget.parent().children()[-1].text() != '<additional_func>') & (
+                                    child_widget.parent().children()[-1].text() != ''):
+                                col_name = query_add_func(col_name, child_widget.parent().children()[-1].text())
+                            partitioned_cols.append(col_name)
+                            _new_tab_engine.add_partition(partitioned_cols)
+                            col_name = col_widget.findChild(QLineEdit, 'col_name').text()
+
+                        elif child_widget.objectName() == '_sampled':
+                            if (child_widget.parent().children()[-1].text() != '<additional_func>') & (
+                                    child_widget.parent().children()[-1].text() != ''):
+                                col_name = query_add_func(col_name, child_widget.parent().children()[-1].text())
+                            sampled_cols.append(col_name)
+                            _new_tab_engine.add_sample(sampled_cols)
+                            col_name = col_widget.findChild(QLineEdit, 'col_name').text()
+
+                        elif child_widget.objectName() == '_ordered':
+                            if (child_widget.parent().children()[-1].text() != '<additional_func>') & (
+                                    child_widget.parent().children()[-1].text() != ''):
+                                col_name = query_add_func(col_name, child_widget.parent().children()[-1].text())
+                            ordered_col.append(col_name)
+                            _new_tab_engine.add_order(ordered_col)
+                            col_name = col_widget.findChild(QLineEdit, 'col_name').text()
+
         _new_tab_engine.add_settings(self.entry_setting.text())
         _new_tab.add_engine(_new_tab_engine)
         self.result_query.setPlainText(str(_new_tab))
 
-# TODO: outbounded Widgets & horizontal + vertical main scrolls
+# TODO: outbound Widgets & horizontal + vertical main scrolls
 
 # if __name__ == '__main__':
 #     app = QApplication(sys.argv)

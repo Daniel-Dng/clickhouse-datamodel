@@ -1,5 +1,5 @@
 # from lib.tab_engines import TabEngine
-from lib.functions import (query_columns)
+from lib.utils import (query_columns)
 
 
 ## OBJECTS
