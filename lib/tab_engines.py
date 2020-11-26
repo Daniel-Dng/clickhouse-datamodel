@@ -1,6 +1,6 @@
 import pandas as pd
-from lib.functions import query_prikey, query_partition_by, query_sample_by, query_settings, query_TTL,query_order_by
-from lib.utils import Extractor
+from lib.utils import query_prikey, query_partition_by, query_sample_by, query_settings, query_TTL,query_order_by
+from lib.extractors import Extractor
 from lib.tables import Tables
 
 

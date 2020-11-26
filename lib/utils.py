@@ -1,26 +1,121 @@
-import pandas as pd
-import pkgutil
+def query_add_func(obj, func):
+    _query = ''
+    if isinstance(obj, str):
+        if obj != '':
+            _query = f"{func}({obj})"
+    elif isinstance(obj, list):
+        _list_obj = ','.join(obj)
+        _query = f"{func}({_list_obj})"
+    return _query
 
 
-class Extractor:
-    def __init__(self, file):
-        self.file = file
+def query_order_by(x):
+    _query = ''
+    if isinstance(x, str):
+        if x.strip() != '':
+            _query = f'ORDER BY ({x})'
+        else:
+            _query = ''
+    elif isinstance(x, list):
+        list_x = ','.join(x)
+        _query = f'ORDER BY ({list_x})'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for order_columns')
+    return _query
 
-    @classmethod
-    def txt_to_df(cls, packages, path):
-        file = pkgutil.get_data(packages, path).decode('utf-8')
-        data = pd.DataFrame([line.split('\t') for line in file.split('\r\n')])
-        data = data.rename(columns=data.iloc[0]).drop(data.index[0]).set_index('name')
-        return cls(data)
 
-    @classmethod
-    def txt_to_dict(cls, packages, path):
-        file = pkgutil.get_data(packages, path).decode('utf-8')
-        data = pd.DataFrame([line.split('\t') for line in file.split('\r\n')])
-        data = data.rename(columns=data.iloc[0]).drop(data.index[0]).set_index('name')
-        dict_data = data.T.to_dict()
-        # newdict = {}
-        # for x in dict_data:
-        #     new_key = f"{dict_data[x]['database']}.{dict_data[x]['table']}.{dict_data[x]['name']}"
-        #     newdict[new_key] = dict_data[x]
-        return cls(dict_data)
+def pri_key(x):
+    _query = ''
+    if isinstance(x, str):
+        if x == '':
+            _query = ''
+        else:
+            _query = f'PRIMARY KEY ({x})'
+    elif isinstance(x, list):
+        list_x = ','.join(x)
+        _query = f'PRIMARY KEY ({list_x})'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for Primary Key')
+    return _query
+
+
+def query_partition_by(x):
+    _query = ''
+    if isinstance(x, str):
+        if x != '':
+            _query = f'PARTITION BY ({x})'
+    elif isinstance(x, list):
+        list_x = ','.join(x)
+        _query = f'PARTITION BY ({list_x})'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for partition_columns')
+    return _query
+
+
+def query_sample_by(x):
+    _query = ''
+    if isinstance(x, str):
+        if x != '':
+            _query = f'SAMPLE BY ({x})'
+    elif isinstance(x, list):
+        list_x = ','.join(x)
+        _query = f'SAMPLE BY ({list_x})'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for sample_columns')
+    return _query
+
+
+def query_settings(x):
+    _query = ''
+    if isinstance(x, str):
+        if x != '':
+            _query = 'SETTINGS ' + x
+    elif isinstance(x, list):
+        _query = 'SETTINGS ' + ','.join(x)
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for Settings')
+    return _query
+
+
+def query_TTL(x):
+    _query = 'TTL '
+    if isinstance(x, str):
+        if x == '':
+            _query = ''
+        else:
+            _query = _query + x
+    else:
+        raise TypeError('Only String Data Types are Accepted for TTL')
+    return _query
+
+
+def query_prikey(x):
+    _query = ''
+    if isinstance(x, str):
+        if x == '':
+            _query = ''
+        else:
+            _query = f'PRIMARY KEY ({x})'
+    elif isinstance(x, list):
+        list_x = ','.join(x)
+        _query = f'PRIMARY KEY ({list_x})'
+    else:
+        raise TypeError('Only String or List Data Types are Accepted for primary_keys')
+    return _query
+
+
+def query_columns(col, data_type, function=''):
+    _query = ''
+    data_type = data_type.strip()
+    col = col.strip()
+    function = function
+    if function != '':
+        data_type = query_add_func(data_type, function)
+    if isinstance(col, str):
+        _query = _query + col + ' ' + data_type
+    # elif isinstance(col, list) & isinstance(data_type, list):
+    #     pd.DataFrame(columns=['col','data_type'],data=)
+    else:
+        raise TypeError('Only String or List data types are accepted for columns')
+    return _query
+

@@ -1,4 +1,4 @@
-from lib.functions import query_add_func
+from lib.utils import query_add_func
 from lib.tables import Tables
 
 
