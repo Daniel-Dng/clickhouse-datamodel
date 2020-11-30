@@ -6,11 +6,14 @@
 import sys
 from frontend.app import App
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import *
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('icon.png'))
     ex = App()
     sys.exit(app.exec_())
+
     # input_test = Extractor.txt_to_df('assets', 'input_test.txt').file
     # print(input_test)
     ## Test 1
@@ -60,3 +63,4 @@ if __name__ == '__main__':
     #                                                 (input_test.database == db)]['function'].values[0]
     #                                      )
     #         print(tab_instance)
+
