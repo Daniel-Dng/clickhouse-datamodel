@@ -1,6 +1,7 @@
-from lib.columns import Columns
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QCheckBox, QLineEdit, QHBoxLayout, QVBoxLayout, QComboBox
+from PyQt5.QtWidgets import QWidget, QLabel, QCheckBox, QLineEdit, QHBoxLayout, QVBoxLayout, QComboBox, QPushButton
+
+from lib.columns import Columns
 from lib.extractors import Extractor
 
 data_type_options = list(Extractor.txt_to_dict('assets', 'data_type_families.txt').file.keys())
@@ -11,16 +12,16 @@ class ColumnWidget(QWidget):
     def __init__(self, parent=None):
         super(ColumnWidget, self).__init__(parent)
         # 1st group of widgets + layout
-        self._col = QLabel('Column Name')
-        self._col.setFixedSize(80, 20)
-        self._col.setAlignment(Qt.AlignRight)
+        self.col_name_label = QLabel('Column Name:')
+        self.col_name_label.setFixedSize(80, 20)
+        self.col_name_label.setAlignment(Qt.AlignRight)
         self._entry_col = QLineEdit()
         self._entry_col.setObjectName('col_name')
         self._entry_col.setFixedSize(100, 20)
         self._entry_col.textChanged.connect(self.make_col)
 
-        self._datatype = QLabel('Data Type')
-        self._datatype.setFixedSize(50, 20)
+        self._datatype = QLabel('Data Type:')
+        self._datatype.setFixedSize(80, 20)
         self._datatype.setAlignment(Qt.AlignRight)
         self._entry_datatype = QComboBox()
         self._entry_datatype.addItems(data_type_options)
@@ -30,22 +31,29 @@ class ColumnWidget(QWidget):
         # self._entry_datatype.setFixedSize(100, 20)
         self._entry_datatype.currentTextChanged.connect(self.make_col)
 
-        self._func = QLabel('Function')
-        self._func.setFixedSize(50, 20)
+        self._func = QLabel('Function:')
+        self._func.setFixedSize(80, 20)
         self._func.setAlignment(Qt.AlignRight)
         self._entry_func = QLineEdit()
         self._entry_func.setFixedSize(100, 20)
         self._entry_func.textChanged.connect(self.make_col)
 
-        self._codec = QLabel('CODEC')
-        self._codec.setFixedSize(50, 20)
+        self._codec = QLabel('CODEC:')
+        self._codec.setFixedSize(80, 20)
         self._codec.setAlignment(Qt.AlignRight)
         self._entry_codec = QLineEdit()
         self._entry_codec.setFixedSize(100, 20)
         self._entry_codec.textChanged.connect(self.make_col)
 
+        # self.addcol = QPushButton('+')
+        # self.addcol.setFixedSize(20, 20)
+        # self.addcol.clicked.connect(self.addcol_func)
+        self.rmvcol = QPushButton('-')
+        self.rmvcol.setFixedSize(20, 20)
+        self.rmvcol.clicked.connect(self.deleteLater)
+
         hlayout1 = QHBoxLayout()
-        hlayout1.addWidget(self._col, alignment=Qt.AlignRight)
+        hlayout1.addWidget(self.col_name_label, alignment=Qt.AlignRight)
         hlayout1.addWidget(self._entry_col, alignment=Qt.AlignLeft)
         hlayout1.addWidget(self._datatype, alignment=Qt.AlignRight)
         hlayout1.addWidget(self._entry_datatype, alignment=Qt.AlignLeft)
@@ -53,6 +61,8 @@ class ColumnWidget(QWidget):
         hlayout1.addWidget(self._entry_func, alignment=Qt.AlignLeft)
         hlayout1.addWidget(self._codec, alignment=Qt.AlignRight)
         hlayout1.addWidget(self._entry_codec, alignment=Qt.AlignLeft)
+        hlayout1.addWidget(self.rmvcol, alignment=Qt.AlignRight)
+        # hlayout1.addWidget(self.addcol, alignment=Qt.AlignLeft)
 
         # 2nd group of widgets + layout
         self._nullable = QCheckBox('Nullable')
@@ -112,8 +122,10 @@ class ColumnWidget(QWidget):
         vlayout = QVBoxLayout()
         vlayout.addLayout(hlayout1)
         vlayout.addLayout(hlayout2)
-
         self.setLayout(vlayout)
+
+        # Other Variables
+        self.col_position = 0
 
     def make_col(self):
         is_nullable = 1 if self._nullable.isChecked() else 0
@@ -123,4 +135,9 @@ class ColumnWidget(QWidget):
                                function=self._entry_func.text(),
                                codec=self._entry_codec.text())
 
-# TODO: add column position that's self-updated
+    # def addcol_func(self):
+    #     print(self.parent().children()[0].getWidgetPosition(self)[0]-1)
+    #     print(self.col_position)
+        # self.parent().children()[0].insertRow(self.col_position-1, ColumnWidget())
+
+# TODO: add_button that adds column next to the current one

@@ -3,7 +3,7 @@ from lib.tables import Tables
 
 
 class Columns(Tables):
-    def __init__(self, col_name, data_type, nullable=0, function='', codec= ''):
+    def __init__(self, col_name, data_type, nullable=0, function='', codec=''):
         self.col_name = col_name
         self.function = function
         self.codec = 'CODEC(' + codec + ')' if codec != '' else codec
@@ -26,7 +26,6 @@ class Columns(Tables):
     def add_codec(self, codec):
         self.codec = self.codec + 'CODEC(' + codec + ')'
         return self
-
 
 # class Prikey(Tables.Columns):
 #     def __init__(self, name, datatype, function='', is_in_primary_key=0, is_in_sorting_key=0,
