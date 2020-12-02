@@ -1,4 +1,3 @@
-# from lib.tab_engines import TabEngine
 from lib.utils import (query_columns)
 
 
@@ -14,29 +13,6 @@ class Database:
 
 
 class Tables:
-    # class Columns:
-    #     def __init__(self, name, datatype, function='', is_in_primary_key=0, is_in_sorting_key=0,
-    #                  is_in_partition_key=0, is_in_sampling_key=0):
-    #         self.name = name
-    #         self.datatype = datatype
-    #         self.function = function
-    #         self.is_in_sorting_key = is_in_sorting_key
-    #         self.is_in_primary_key = is_in_primary_key
-    #         self.is_in_partition_key = is_in_partition_key
-    #         # self.compression_codec = compression_codec
-    #         self.is_in_sampling_key = is_in_sampling_key
-    #
-    #     # @staticmethod
-    #     # def add_func(datatype,):
-    #     #     return query_add_func(datatype, function)
-    #     # @classmethod
-    #     # def add_datatype(cls, datatype, function):
-    #     #     type_with_func = query_add_func(datatype, func=function)
-    #     #     return cls(datatype=type_with_func)
-    #
-    #     def to_query(self):
-    #         return f"{self.name} {self.datatype}"
-
     def __init__(self, name, database='', tab_engine='', **kwargs):
         self.tab_engine = tab_engine
         self.name = name

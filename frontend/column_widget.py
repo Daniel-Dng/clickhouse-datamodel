@@ -1,9 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QCheckBox, QLineEdit, QHBoxLayout, QVBoxLayout, QComboBox, QPushButton
-
 from lib.columns import Columns
 from lib.extractors import Extractor
-
 data_type_options = list(Extractor.txt_to_dict('assets', 'data_type_families.txt').file.keys())
 data_type_options.sort()
 
@@ -50,7 +48,7 @@ class ColumnWidget(QWidget):
         # self.addcol.clicked.connect(self.addcol_func)
         self.rmvcol = QPushButton('-')
         self.rmvcol.setFixedSize(20, 20)
-        self.rmvcol.clicked.connect(self.deleteLater)
+        self.rmvcol.clicked.connect(self.rmvcol_func)
 
         hlayout1 = QHBoxLayout()
         hlayout1.addWidget(self.col_name_label, alignment=Qt.AlignRight)
@@ -135,9 +133,28 @@ class ColumnWidget(QWidget):
                                function=self._entry_func.text(),
                                codec=self._entry_codec.text())
 
+    def rmvcol_func(self):
+        parent_widget = self.parent()
+        parent_widget.children()[0].removeRow(parent_widget.children()[self.col_position])
+
     # def addcol_func(self):
-    #     print(self.parent().children()[0].getWidgetPosition(self)[0]-1)
-    #     print(self.col_position)
-        # self.parent().children()[0].insertRow(self.col_position-1, ColumnWidget())
+    #     parent_widget = self.parent()
+    #     parent_layout = parent_widget.children()[0]
+    #     widget_position = self.parent().children()[0].getWidgetPosition(self)[0]
+    #
+    #     nxt_col = ColumnWidget()
+    #     nxt_col.col_name_label.setText('Column ' + str(self.col_position + 1))
+    #     nxt_col.col_position = self.col_position + 1
+    #     parent_layout.insertRow(widget_position, nxt_col)
+    #     print('total widgets', self.parent().children()[0].rowCount(), 'current wid_pos', widget_position)
+    #     print('next col_position', str(self.col_position + 1), 'next widget_pos', widget_position)
+    #
+    #     self.resetcol_func()
+    #     self.parent().parent().parent().parent().parent().parent().parent().reset_column_name()
+    #     print('pos before: ', self.col_position)
+    #     self.col_position = self.col_position - 1
+    #     print('pos after: ',self.col_position)
+    #     nxt_col.addcol.clicked.connect(self.parent().parent().parent().parent().reset_column_name)
+
 
 # TODO: add_button that adds column next to the current one

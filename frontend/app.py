@@ -47,7 +47,7 @@ class App(QMainWindow):
         self.tab_engine_box.addItems(tab_engine_options)
         self.tab_engine_box.adjustSize()
         self.tab_engine_box.setCurrentText('MergeTree')
-        self.tab_engine_box.setEditable(True)
+        # self.tab_engine_box.setEditable(True)
 
         self.setting_label = QLabel('Setting:')
         self.entry_setting = QLineEdit()
@@ -55,6 +55,7 @@ class App(QMainWindow):
 
         self.addColButton = QPushButton('<AddColumn>')
         self.addColButton.clicked.connect(self.addColumn)
+        self.addColButton.clicked.connect(self.reset_column_name)
         self.addColButton.setFixedSize(100, 20)
         self.addColButton.setShortcut('Ctrl+A')
 
@@ -120,6 +121,7 @@ class App(QMainWindow):
         self.Root_Widget.setObjectName('root')
         self.Root_Widget.setLayout(self.root_layout)
         self.Root_ScrollArea = QScrollArea(self)
+        self.Root_ScrollArea.setObjectName('root_scroll_area')
         self.Root_ScrollArea.setGeometry(0, 0, self.width - 21, self.height)  # Lowered down by the height of menu bar
         self.Root_ScrollArea.setWidgetResizable(True)
         self.hscroll_bar = self.Root_ScrollArea.horizontalScrollBar()
@@ -141,16 +143,9 @@ class App(QMainWindow):
     def addColumn(self):
         self._column = ColumnWidget(self)
         self.scrollLayout.insertRow(0, self._column)
-        self._column.col_name_label.setText('Column ' + str(self.scrollLayout.count() - self.scrollLayout.getWidgetPosition(self._column)[0]))
-        self._column.col_position = int(self.scrollLayout.count() - self.scrollLayout.getWidgetPosition(self._column)[0])
+        self._column.col_name_label.setText('Column ' + str(self.scrollLayout.rowCount() - self.scrollLayout.getWidgetPosition(self._column)[0]))
+        self._column.col_position = self.scrollLayout.count() - self.scrollLayout.getWidgetPosition(self._column)[0]
         self._column.destroyed.connect(self.reset_column_name)
-        # self._column.setObjectName(self._column.col_name_label.text())
-        # self._column.addcol.setObjectName('add_col_' + str(self.scrollLayout.count() - self.scrollLayout.getWidgetPosition(self._column)[0]))
-        # self._column.addcol.clicked.connect(self.reset_column_name)
-
-    # def addNextColumn(self):
-    #     self._column.parent().children()[0].insertRow(0, QLabel('HAHAHA'))
-    #     self.scrollWidget.findChild()
 
     def reset_column_name(self):
         count = 0
@@ -161,11 +156,9 @@ class App(QMainWindow):
             col_widget.col_name_label.setText('Column ' + str(count))
             # col_widget.setObjectName('Column ' + str(count))
             col_widget.col_position = count
-            # self._column.addcol.setObjectName('add_col'+str(count))
 
     def rmvColumn(self):
         self.scrollLayout.removeRow(self.scrollWidget.children()[-1])
-        # self.scrollLayout.
 
     ## Footer Functions
     def create_table(self):
@@ -213,7 +206,7 @@ class App(QMainWindow):
     def main_menu(self):
         menu_bar = QMenuBar(self)
         self.setMenuBar(menu_bar)
-        # menus within Menu Bar
+        # menu actions within Menu Bar
         menu_file = menu_bar.addMenu('File')
         save_action = QAction('Save Query', self)
         save_action.triggered.connect(self.file_save)
@@ -226,11 +219,14 @@ class App(QMainWindow):
         menu_file.addAction(open_action)
 
     def file_open(self):
-        name = QFileDialog.getOpenFileName(self, 'Open File')
-        file = open(name[0], 'r')
-        with file:
-            text = file.read()
-            self.result_query.setPlainText(text)
+        try:
+            name = QFileDialog.getOpenFileName(self, 'Open File')
+            file = open(name[0], 'r')
+            with file:
+                text = file.read()
+                self.result_query.setPlainText(text)
+        except Exception:
+            pass
 
     def file_save(self):
         text = self.result_query.toPlainText()
@@ -240,7 +236,7 @@ class App(QMainWindow):
             file = open(name[0], 'w')
             file.write(text)
             file.close()
-        except Exception as error:
+        except Exception:
             pass
 
 # if __name__ == '__main__':
