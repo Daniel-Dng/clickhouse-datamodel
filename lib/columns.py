@@ -26,23 +26,3 @@ class Columns(Tables):
     def add_codec(self, codec):
         self.codec = self.codec + 'CODEC(' + codec + ')'
         return self
-
-# class Prikey(Tables.Columns):
-#     def __init__(self, name, datatype, function='', is_in_primary_key=0, is_in_sorting_key=0,
-#                  is_in_partition_key=0, compression_codec='', is_in_sampling_key=0):
-#         super().__init__(name, datatype, function, 1, 1,
-#                          is_in_partition_key, compression_codec, is_in_sampling_key)
-
-
-# test = Columns('ps_name', 'String').add_function('LowCardinality').add_codec('Default')
-# test2 = Columns('ps_id', 'UInt8', 0).add_function('LowCardinality').add_codec('Default')
-# # test3 = Columns('ps_id', 'UInt8', 0).add_function('Hash').add_codec('Default')
-# # print(test, test3)
-#
-# tab = Tables('payment_systems', 'entities', 'MergeTree').add_columns('   ps_ndames',' String')
-# tab.add_columns(str(test2))
-# tab2 = str(tab)
-# tab.rmv_columns(str(test2))
-# print(tab)
-# print(tab2)
-# print(test2)
