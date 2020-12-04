@@ -129,7 +129,6 @@ class App(QMainWindow):
         self.Root_ScrollArea.setObjectName('root_scroll_area')
         self.Root_ScrollArea.setGeometry(0, 0, self.width - 21, self.height)  # Lowered down by the height of menu bar
         self.Root_ScrollArea.setWidgetResizable(True)
-        # self.Root_ScrollArea.installEventFilter(self)
         self.hscroll_bar = self.Root_ScrollArea.horizontalScrollBar()
         self.vscroll_bar = self.Root_ScrollArea.verticalScrollBar()
         # self.Root_Widget.setGeometry(0, 0, self.width, self.height)
