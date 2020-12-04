@@ -137,24 +137,5 @@ class ColumnWidget(QWidget):
         parent_widget = self.parent()
         parent_widget.children()[0].removeRow(parent_widget.children()[self.col_position])
 
-    # def addcol_func(self):
-    #     parent_widget = self.parent()
-    #     parent_layout = parent_widget.children()[0]
-    #     widget_position = self.parent().children()[0].getWidgetPosition(self)[0]
-    #
-    #     nxt_col = ColumnWidget()
-    #     nxt_col.col_name_label.setText('Column ' + str(self.col_position + 1))
-    #     nxt_col.col_position = self.col_position + 1
-    #     parent_layout.insertRow(widget_position, nxt_col)
-    #     print('total widgets', self.parent().children()[0].rowCount(), 'current wid_pos', widget_position)
-    #     print('next col_position', str(self.col_position + 1), 'next widget_pos', widget_position)
-    #
-    #     self.resetcol_func()
-    #     self.parent().parent().parent().parent().parent().parent().parent().reset_column_name()
-    #     print('pos before: ', self.col_position)
-    #     self.col_position = self.col_position - 1
-    #     print('pos after: ',self.col_position)
-    #     nxt_col.addcol.clicked.connect(self.parent().parent().parent().parent().reset_column_name)
-
 
 # TODO: add_button that adds column next to the current one

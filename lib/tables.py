@@ -13,13 +13,17 @@ class Database:
 
 
 class Tables:
-    def __init__(self, name, database='', tab_engine='', **kwargs):
+    def __init__(self, name, database='', cluster='', tab_engine='', **kwargs):
         self.tab_engine = tab_engine
         self.name = name
         if database != '':
             self.database = database + '.'
         else:
             self.database = database
+        if cluster != '':
+            self.cluster = 'ON CLUSTER ' + cluster
+        else:
+            self.cluster = cluster
         self.columns = list()
         self.partition_columns = kwargs.get('partition_columns')
         self.other_settings = kwargs.get('other_settings')
@@ -28,10 +32,11 @@ class Tables:
         self.ttl = kwargs.get('ttl')
 
     def __str__(self):
-        return "CREATE TABLE IF NOT EXISTS {}{}\n" \
+        return "CREATE TABLE IF NOT EXISTS {}{} {}\n" \
                "(\n{}\n)\n" \
                "{}\n;".format(self.database,
                               self.name,
+                              self.cluster,
                               ',\n'.join(self.columns),
                               self.tab_engine)
 
@@ -51,4 +56,8 @@ class Tables:
 
     def add_engine(self, engine_name):
         self.tab_engine = engine_name
+        return self
+
+    def add_cluster(self, cluster):
+        self.cluster = cluster
         return self
