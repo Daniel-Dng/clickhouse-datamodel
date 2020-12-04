@@ -23,6 +23,7 @@ class App(QMainWindow):
         # self.i = 40
         # self.j = 80
         self.counter = 1
+        self.last_time_move = 0
         self.initUI()
 
     def initUI(self):
@@ -38,6 +39,8 @@ class App(QMainWindow):
         # self.db_engine_box = QComboBox(self)
         # self.db_engine_box.addItems(['', 'MySQL', 'Lazy'])
         # self.db_engine_box.adjustSize()
+        self.cluster_label = QLabel('On Cluster:')
+        self.entry_cluster = QLineEdit()
 
         ## 2nd row
         self.tab_label = QLabel('Table:')
@@ -48,7 +51,6 @@ class App(QMainWindow):
         self.tab_engine_box.adjustSize()
         self.tab_engine_box.setCurrentText('MergeTree')
         # self.tab_engine_box.setEditable(True)
-
         self.setting_label = QLabel('Setting:')
         self.entry_setting = QLineEdit()
         # self.entry_setting = QLineEdit('index_granularity = 8192', self)
@@ -57,12 +59,12 @@ class App(QMainWindow):
         self.addColButton.clicked.connect(self.addColumn)
         self.addColButton.clicked.connect(self.reset_column_name)
         self.addColButton.setFixedSize(100, 20)
-        self.addColButton.setShortcut('Ctrl+A')
+        self.addColButton.setShortcut('Ctrl+E')
 
         self.rmvColButton = QPushButton('<RemoveColumn>')
         self.rmvColButton.setFixedSize(100, 20)
         self.rmvColButton.clicked.connect(self.rmvColumn)
-        self.rmvColButton.setShortcut('Ctrl+B')
+        self.rmvColButton.setShortcut('Ctrl+R')
 
         ## header widget & layout
         self.header = QWidget()
@@ -71,6 +73,8 @@ class App(QMainWindow):
         header_layout.setContentsMargins(10, 10, 10, 10)
         header_layout.addWidget(self.db_label, 0, 0)
         header_layout.addWidget(self.entry_db, 0, 1)
+        header_layout.addWidget(self.cluster_label, 0, 2)
+        header_layout.addWidget(self.entry_cluster, 0, 3)
         # header_layout.addWidget(self.db_engine_label, 0, 2)
         # header_layout.addWidget(self.db_engine_box, 0, 3)
         header_layout.addWidget(self.tab_label, 1, 0)
@@ -92,8 +96,9 @@ class App(QMainWindow):
         self.scrollArea = QScrollArea()  # scrollArea which contains the widgets
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.scrollWidget)
+        self.small_vscrollbar = self.scrollArea.verticalScrollBar()
         self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        ## Make the first ColumnWidget visible
+        self.scrollArea.installEventFilter(self)
 
         # FOOTER
         ## footer contents
@@ -124,6 +129,7 @@ class App(QMainWindow):
         self.Root_ScrollArea.setObjectName('root_scroll_area')
         self.Root_ScrollArea.setGeometry(0, 0, self.width - 21, self.height)  # Lowered down by the height of menu bar
         self.Root_ScrollArea.setWidgetResizable(True)
+        # self.Root_ScrollArea.installEventFilter(self)
         self.hscroll_bar = self.Root_ScrollArea.horizontalScrollBar()
         self.vscroll_bar = self.Root_ScrollArea.verticalScrollBar()
         # self.Root_Widget.setGeometry(0, 0, self.width, self.height)
@@ -143,7 +149,8 @@ class App(QMainWindow):
     def addColumn(self):
         self._column = ColumnWidget(self)
         self.scrollLayout.insertRow(0, self._column)
-        self._column.col_name_label.setText('Column ' + str(self.scrollLayout.rowCount() - self.scrollLayout.getWidgetPosition(self._column)[0]))
+        self._column.col_name_label.setText(
+            'Column ' + str(self.scrollLayout.rowCount() - self.scrollLayout.getWidgetPosition(self._column)[0]))
         self._column.col_position = self.scrollLayout.count() - self.scrollLayout.getWidgetPosition(self._column)[0]
         self._column.destroyed.connect(self.reset_column_name)
 
@@ -163,7 +170,8 @@ class App(QMainWindow):
     ## Footer Functions
     def create_table(self):
         _new_tab = Tables(name=self.entry_tab.text(),
-                          database=self.entry_db.text())
+                          database=self.entry_db.text(),
+                          cluster=self.entry_cluster.text())
         _new_tab_engine = TabEngine(self.tab_engine_box.currentText())
         partitioned_cols = []
         ordered_col = []
@@ -218,6 +226,7 @@ class App(QMainWindow):
         open_action.setShortcut('Ctrl+O')
         menu_file.addAction(open_action)
 
+    # noinspection PyBroadException
     def file_open(self):
         try:
             name = QFileDialog.getOpenFileName(self, 'Open File')
@@ -228,6 +237,7 @@ class App(QMainWindow):
         except Exception:
             pass
 
+    # noinspection PyBroadException
     def file_save(self):
         text = self.result_query.toPlainText()
         try:
@@ -238,6 +248,22 @@ class App(QMainWindow):
             file.close()
         except Exception:
             pass
+
+    ## Additional Features
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.MouseMove:
+            # print(event.pos().y())
+            if self.last_time_move == 0:
+                self.last_time_move = event.pos().y()
+            vdistance = self.last_time_move - event.pos().y()
+            # hdistance = self.last_time_move - event.pos().x()
+            self.small_vscrollbar.setValue(self.small_vscrollbar.value() + vdistance)
+            # self.vscroll_bar.setValue(self.vscroll_bar.value() + vdistance)
+            # self.hscroll_bar.setValue(self.hscroll_bar.value() + hdistance)
+            self.last_time_move = event.pos().y()
+        elif event.type() == QEvent.MouseButtonRelease:
+            self.last_time_move = 0
+        return QWidget.eventFilter(self, source, event)
 
 # if __name__ == '__main__':
 #     app = QApplication(sys.argv)
