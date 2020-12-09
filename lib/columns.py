@@ -14,7 +14,7 @@ class Columns(Tables):
     def __str__(self):
         return f"{self.col_name} " \
                f"{self.data_type} " \
-               f"{self.codec}"
+               f"{self.codec} "
 
     def add_function(self, function):
         if self.function == '':

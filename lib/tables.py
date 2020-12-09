@@ -32,7 +32,7 @@ class Tables:
         self.ttl = kwargs.get('ttl')
 
     def __str__(self):
-        return "CREATE TABLE IF NOT EXISTS {}{} {}\n" \
+        return "CREATE TABLE IF NOT EXISTS {}{} {} \n" \
                "(\n{}\n)\n" \
                "{}\n;".format(self.database,
                               self.name,
@@ -59,5 +59,5 @@ class Tables:
         return self
 
     def add_cluster(self, cluster):
-        self.cluster = cluster
+        self.cluster = "'"+cluster+"'"
         return self

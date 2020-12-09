@@ -1,7 +1,7 @@
 # import db_connect as db
 # import pandas as pd
 # from lib.tables import Tables
-# from lib.utils import Extractor
+# from lib.extractors import Extractor
 # from lib.tab_engines import TabEngine
 import sys
 from frontend.app import App
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     # input_test = Extractor.txt_to_df('assets', 'input_test.txt').file
     # print(input_test)
-    ## Test 1
+    # # Test 1
     # for db in input_test.database.unique():
     #     # print(db)
     #     for table in input_test[input_test.database == db].table.unique():
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     #                                                 (input_test.database == db)]['function'].values[0]
     #                                      )
     #         print(tab_instance)
-    ## Test 2
+    # Test 2
     # input_test = Extractor.txt_to_df('assets', 'input_test.txt').file
     # for db in input_test.database.unique():
     #     for table in input_test[input_test.database == db].table.unique():
@@ -62,5 +62,4 @@ if __name__ == '__main__':
     #                                                 (input_test.index == col) &
     #                                                 (input_test.database == db)]['function'].values[0]
     #                                      )
-    #         print(tab_instance)
-
+    #         [print('table_names: ',x.split('.')[1]) for x in str(tab_instance).replace(' IF NOT EXISTS ', ' ').split('\n')[0].split() if '.' in x]

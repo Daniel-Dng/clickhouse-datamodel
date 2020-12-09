@@ -41,7 +41,7 @@ class TabEngine(Tables):
 
     def add_settings(self, setting):
         if self.sys_dict[self.engine_name]['supports_settings'] == '1':
-            self.settings = query_settings(setting)
+            self.settings = query_settings(setting.replace(' ',''))
         # else:
         #     raise ValueError('Table Engine does not support settings')
         return self
