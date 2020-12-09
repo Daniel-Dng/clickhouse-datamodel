@@ -1,3 +1,6 @@
+import re
+
+
 def query_add_func(obj, func):
     _query = ''
     if isinstance(obj, str):
@@ -7,6 +10,16 @@ def query_add_func(obj, func):
         _list_obj = ','.join(obj)
         _query = f"{func}({_list_obj})"
     return _query
+
+
+def query_rmv_func(obj_with_func):
+    if (obj_with_func != '') & ('(' in obj_with_func) & (')' in obj_with_func):
+        obj = re.findall('\((.*)\)', obj_with_func)[0]
+        func = re.findall('(.*)\(', obj_with_func)[0]
+    return obj, func
+
+# print(query_rmv_func('func(nullable(obj))'))
+# TODO: need opti
 
 
 def query_order_by(x):
@@ -118,4 +131,3 @@ def query_columns(col, data_type, function=''):
     else:
         raise TypeError('Only String or List data types are accepted for columns')
     return _query
-

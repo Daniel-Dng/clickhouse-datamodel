@@ -5,7 +5,8 @@ from frontend.column_widget import ColumnWidget
 from lib.tables import Tables
 from lib.tab_engines import TabEngine
 from lib.extractors import Extractor
-from lib.utils import query_add_func
+from lib.utils import query_add_func, query_rmv_func
+import re
 
 tab_engine_options = list(Extractor.txt_to_dict('assets', 'table_engines.txt').file.keys())
 tab_engine_options.sort()
@@ -59,12 +60,12 @@ class App(QMainWindow):
         self.addColButton.clicked.connect(self.addColumn)
         self.addColButton.clicked.connect(self.reset_column_name)
         self.addColButton.setFixedSize(100, 20)
-        self.addColButton.setShortcut('Ctrl+E')
+        self.addColButton.setShortcut('Ctrl+A')
 
         self.rmvColButton = QPushButton('<RemoveColumn>')
         self.rmvColButton.setFixedSize(100, 20)
         self.rmvColButton.clicked.connect(self.rmvColumn)
-        self.rmvColButton.setShortcut('Ctrl+R')
+        self.rmvColButton.setShortcut('Ctrl+B')
 
         ## header widget & layout
         self.header = QWidget()
@@ -106,16 +107,24 @@ class App(QMainWindow):
         self.result_query.setFixedSize(1000, 150)
         self.result_query.setStyleSheet("border :3px solid black")
         self.result_query.setAcceptDrops(True)
-        self.createButton = QPushButton('CREATE')
+        self.createButton = QPushButton('QUERY')
         self.createButton.setShortcut('Ctrl+Q')
         self.createButton.clicked.connect(self.create_table)
+        self.reverseButton = QPushButton('REVERSE')
+        self.reverseButton.setShortcut('Ctrl+R')
+        self.reverseButton.clicked.connect(self.reverse)
+        self.buttons = QWidget()
+        self.button_layout = QHBoxLayout()
+        self.buttons.setLayout(self.button_layout)
+        self.button_layout.addWidget(self.createButton, alignment=Qt.AlignLeft)
+        self.button_layout.addWidget(self.reverseButton, alignment=Qt.AlignLeft)
 
         ## footer widget & layout
         self.footer = QWidget()
         footer_layout = QVBoxLayout()
         self.footer.setLayout(footer_layout)
         footer_layout.addWidget(self.result_query, alignment=Qt.AlignCenter)
-        footer_layout.addWidget(self.createButton, alignment=Qt.AlignLeft)
+        footer_layout.addWidget(self.buttons, alignment=Qt.AlignLeft)
 
         # Other variables + features
         self.main_menu()
@@ -129,6 +138,7 @@ class App(QMainWindow):
         self.Root_ScrollArea.setObjectName('root_scroll_area')
         self.Root_ScrollArea.setGeometry(0, 0, self.width - 21, self.height)  # Lowered down by the height of menu bar
         self.Root_ScrollArea.setWidgetResizable(True)
+        # self.Root_ScrollArea.installEventFilter(self)
         self.hscroll_bar = self.Root_ScrollArea.horizontalScrollBar()
         self.vscroll_bar = self.Root_ScrollArea.verticalScrollBar()
         # self.Root_Widget.setGeometry(0, 0, self.width, self.height)
@@ -209,6 +219,91 @@ class App(QMainWindow):
         _new_tab.add_engine(_new_tab_engine)
         self.result_query.setPlainText(str(_new_tab))
 
+    def reverse_query(self, text):
+        rows_in_txt = str(text).replace(' IF NOT EXISTS ', ' ').split('\n')
+        # Removing all existing Columns
+        for i in range(self.scrollLayout.count()):
+            self.rmvColumn()
+        # Adding new info (Reverse query)
+        ## DB & TABLE & CLUSTER
+        first_row_elements = rows_in_txt[0].split(' ')
+        for first_row_element in first_row_elements:
+            if '.' in first_row_element:
+                self.entry_db.setText(first_row_element.split('.')[0])
+                self.entry_tab.setText(first_row_element.split('.')[1])
+        if 'ON CLUSTER' in rows_in_txt[0]:
+            cluster_name = re.findall('ON CLUSTER \'(.*?)\'', rows_in_txt[0])[0]
+            # cluster_name = re.sub('\'$|^\'', '', cluster_name)
+            self.entry_cluster.setText(cluster_name)
+
+        ## TAB ENGINE
+        last_row_elements = rows_in_txt[-2].split()
+        self.tab_engine_box.setCurrentText(last_row_elements[1])
+        ### ordered
+        ordered_cols = {}
+        if 'ORDER' in rows_in_txt[-2]:
+            ordered_chunk = re.findall('ORDER BY (.*?) ', rows_in_txt[-2])[0]
+            ordered_chunk = re.sub('\)$|^\(', '', ordered_chunk).split(',')
+            for col in ordered_chunk:
+                if '(' in col:
+                    col_name = query_rmv_func(col)[0]
+                    add_func = query_rmv_func(col)[1]
+                    ordered_cols[col_name] = add_func
+                else:
+                    ordered_cols[col] = ''
+        ### partitioned
+        partitioned_cols = {}
+        if 'PARTITION' in rows_in_txt[-2]:
+            partition_chunk = re.findall('PARTITION BY (.*?) ', rows_in_txt[-2])[0]
+            partition_chunk = re.sub('\)$|^\(', '', partition_chunk).split(',')
+            for col in partition_chunk:
+                if '(' in col:
+                    col_name = query_rmv_func(col)[0]
+                    add_func = query_rmv_func(col)[1]
+                    partitioned_cols[col_name] = add_func
+                else:
+                    partitioned_cols[col] = ''
+        ### TAB ENGINE SETTING
+        if 'SETTINGS' in rows_in_txt[-2]:
+            engine_settings = re.findall('SETTINGS (.*?) ', rows_in_txt[-2])[0]
+            self.entry_setting.setText(engine_settings)
+
+        ## COLUMNS
+        for col_rows in rows_in_txt[2:(len(rows_in_txt) - 3)]:
+            col_elements = col_rows.split(' ')
+            self.addColumn()
+            self._column._entry_col.setText(col_elements[0])
+            if 'Nullable(' in col_elements[1]:
+                self._column._nullable.setChecked(1)
+                self._column._entry_datatype.setCurrentText(query_rmv_func(col_elements[1])[0])
+            elif '(' in col_elements[1]:
+                datatype = query_rmv_func(col_elements[1])[0]
+                datatype_func = query_rmv_func(col_elements[1])[1]
+                self._column._entry_datatype.setCurrentText(datatype)
+                self._column._entry_func.setText(datatype_func)
+            else:
+                self._column._entry_datatype.setCurrentText(col_elements[1])
+            ### CODEC
+            if col_elements[2] != ',':
+                if 'CODEC(' in col_elements[2]:
+                    self._column._entry_codec.setText(query_rmv_func(col_elements[2])[0])
+            ### ORDER & PARTITION
+            if col_elements[0] in ordered_cols.keys():
+                self._column._ordered.setChecked(1)
+                if ordered_cols[col_elements[0]] != '':
+                    self._column._ordered_func.setText(ordered_cols[col_elements[0]])
+            if col_elements[0] in partitioned_cols.keys():
+                self._column._partitioned.setChecked(1)
+                if partitioned_cols[col_elements[0]] != '':
+                    self._column._partitioned_func.setText(partitioned_cols[col_elements[0]])
+
+    def reverse(self):
+        try:
+            text = self.result_query.toPlainText()
+            self.reverse_query(text)
+        except Exception:
+            pass
+
     ## Menu Bar Functions
     def main_menu(self):
         menu_bar = QMenuBar(self)
@@ -225,7 +320,7 @@ class App(QMainWindow):
         open_action.setShortcut('Ctrl+O')
         menu_file.addAction(open_action)
 
-    # noinspection PyBroadException
+    # noinspection PyBroadException,PyProtectedMember
     def file_open(self):
         try:
             name = QFileDialog.getOpenFileName(self, 'Open File')
@@ -233,6 +328,7 @@ class App(QMainWindow):
             with file:
                 text = file.read()
                 self.result_query.setPlainText(text)
+            self.reverse_query(text)
         except Exception:
             pass
 
@@ -249,6 +345,7 @@ class App(QMainWindow):
             pass
 
     ## Additional Features
+    ### Mouse Scrolling
     def eventFilter(self, source, event):
         if event.type() == QEvent.MouseMove:
             # print(event.pos().y())
