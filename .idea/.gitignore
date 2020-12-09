@@ -3,3 +3,4 @@
 /workspace.xml
 !/lib/
 /src
+**/__pycache__
