@@ -10,7 +10,7 @@ from PyQt5.QtGui import *
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon('icon.png'))
+    # app.setWindowIcon(QIcon('icon.png'))
     ex = App()
     sys.exit(app.exec_())
 

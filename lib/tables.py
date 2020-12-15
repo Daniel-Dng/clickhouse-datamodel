@@ -21,7 +21,7 @@ class Tables:
         else:
             self.database = database
         if cluster != '':
-            self.cluster = 'ON CLUSTER ' + cluster
+            self.cluster = "ON CLUSTER '" + cluster + "'"
         else:
             self.cluster = cluster
         self.columns = list()

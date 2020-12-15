@@ -50,7 +50,7 @@ class App(QMainWindow):
         self.tab_engine_box = QComboBox()
         self.tab_engine_box.addItems(tab_engine_options)
         self.tab_engine_box.adjustSize()
-        self.tab_engine_box.setCurrentText('MergeTree')
+        self.tab_engine_box.setCurrentText('ReplicatedMergeTree')
         # self.tab_engine_box.setEditable(True)
         self.setting_label = QLabel('Setting:')
         self.entry_setting = QLineEdit()
@@ -221,7 +221,13 @@ class App(QMainWindow):
 
     def reverse_query(self, text):
         rows_in_txt = str(text).replace(' IF NOT EXISTS ', ' ').split('\n')
-        # Removing all existing Columns
+        # Removing all existing entries
+        ## Tab, Db, Tab_Engine
+        self.entry_tab.setText('')
+        self.entry_db.setText('')
+        self.entry_cluster.setText('')
+        self.entry_setting.setText('')
+        ## Columns
         for i in range(self.scrollLayout.count()):
             self.rmvColumn()
         # Adding new info (Reverse query)
@@ -263,6 +269,20 @@ class App(QMainWindow):
                     partitioned_cols[col_name] = add_func
                 else:
                     partitioned_cols[col] = ''
+
+        ### sampled
+        sampled_cols = {}
+        if 'SAMPLE' in rows_in_txt[-2]:
+            sampled_chunk = re.findall('SAMPLE BY (.*?) ', rows_in_txt[-2])[0]
+            sampled_chunk = re.sub('\)$|^\(', '', sampled_chunk).split(',')
+            for col in sampled_chunk:
+                if '(' in col:
+                    col_name = query_rmv_func(col)[0]
+                    add_func = query_rmv_func(col)[1]
+                    sampled_cols[col_name] = add_func
+                else:
+                    sampled_cols[col] = ''
+
         ### TAB ENGINE SETTING
         if 'SETTINGS' in rows_in_txt[-2]:
             engine_settings = re.findall('SETTINGS (.*?) ', rows_in_txt[-2])[0]
@@ -287,15 +307,21 @@ class App(QMainWindow):
             if col_elements[2] != ',':
                 if 'CODEC(' in col_elements[2]:
                     self._column._entry_codec.setText(query_rmv_func(col_elements[2])[0])
-            ### ORDER & PARTITION
+            ### ORDER
             if col_elements[0] in ordered_cols.keys():
                 self._column._ordered.setChecked(1)
                 if ordered_cols[col_elements[0]] != '':
                     self._column._ordered_func.setText(ordered_cols[col_elements[0]])
+            ### PARTITION
             if col_elements[0] in partitioned_cols.keys():
                 self._column._partitioned.setChecked(1)
                 if partitioned_cols[col_elements[0]] != '':
                     self._column._partitioned_func.setText(partitioned_cols[col_elements[0]])
+            ### SAMPLE
+            if col_elements[0] in sampled_cols.keys():
+                self._column._sampled.setChecked(1)
+                if sampled_cols[col_elements[0]] != '':
+                    self._column._sampled_func.setText(sampled_cols[col_elements[0]])
 
     def reverse(self):
         try:
