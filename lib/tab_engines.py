@@ -16,9 +16,9 @@ class TabEngine(Tables):
 
     def __str__(self):
         return f"ENGINE {self.engine_name} " \
+               f"{self.pri_key} " \
                f"{self.order_col} " \
                f"{self.partition_col} " \
-               f"{self.pri_key} " \
                f"{self.sample_col} " \
                f"{self.settings} " \
                f"{self.ttl}"
