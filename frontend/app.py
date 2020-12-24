@@ -52,9 +52,13 @@ class App(QMainWindow):
         self.tab_engine_box.adjustSize()
         self.tab_engine_box.setCurrentText('ReplicatedMergeTree')
         # self.tab_engine_box.setEditable(True)
+        self.ttl_label = QLabel('TTL:')
+        self.entry_ttl = QLineEdit()
         self.setting_label = QLabel('Setting:')
         self.entry_setting = QLineEdit()
         # self.entry_setting = QLineEdit('index_granularity = 8192', self)
+        self.prikey_label = QLabel('Primary Key:')
+        self.entry_prikey = QLineEdit()
 
         self.addColButton = QPushButton('<AddColumn>')
         self.addColButton.clicked.connect(self.addColumn)
@@ -82,10 +86,15 @@ class App(QMainWindow):
         header_layout.addWidget(self.entry_tab, 1, 1)
         header_layout.addWidget(self.tab_engine_label, 1, 2)
         header_layout.addWidget(self.tab_engine_box, 1, 3)
-        header_layout.addWidget(self.setting_label, 1, 4)
-        header_layout.addWidget(self.entry_setting, 1, 5)
-        header_layout.addWidget(self.addColButton, 1, 7)
-        header_layout.addWidget(self.rmvColButton, 1, 8)
+        header_layout.addWidget(self.prikey_label, 1, 4)
+        header_layout.addWidget(self.entry_prikey, 1, 5)
+        header_layout.addWidget(self.setting_label, 1, 6)
+        header_layout.addWidget(self.entry_setting, 1, 7)
+        header_layout.addWidget(self.ttl_label, 1, 8)
+        header_layout.addWidget(self.entry_ttl, 1, 9)
+
+        header_layout.addWidget(self.addColButton, 2, 8, alignment=Qt.AlignCenter)
+        header_layout.addWidget(self.rmvColButton, 2, 9, alignment=Qt.AlignCenter)
 
         # BODY
         ## Column scrollArea
@@ -216,6 +225,8 @@ class App(QMainWindow):
                             col_name = col_widget.findChild(QLineEdit, 'col_name').text()
 
         _new_tab_engine.add_settings(self.entry_setting.text())
+        _new_tab_engine.add_ttl(self.entry_ttl.text())
+        _new_tab_engine.add_prikey(self.entry_prikey.text())
         _new_tab.add_engine(_new_tab_engine)
         self.result_query.setPlainText(str(_new_tab))
 
@@ -287,6 +298,17 @@ class App(QMainWindow):
         if 'SETTINGS' in rows_in_txt[-2]:
             engine_settings = re.findall('SETTINGS (.*?) ', rows_in_txt[-2])[0]
             self.entry_setting.setText(engine_settings)
+
+        ### TAB ENGINE PRIKEY
+        if 'PRIMARY KEY' in rows_in_txt[-2]:
+            engine_prikey = re.findall('PRIMARY KEY \((.*?)\) ', rows_in_txt[-2])[0]
+            self.entry_prikey.setText(engine_prikey)
+
+        ### TAB ENGINE TTL
+        if 'TTL' in rows_in_txt[-2]:
+            engine_ttl = re.findall('TTL (.*?) ', rows_in_txt[-2])[0]
+            self.entry_ttl.setText(engine_ttl)
+
 
         ## COLUMNS
         for col_rows in rows_in_txt[2:(len(rows_in_txt) - 3)]:
