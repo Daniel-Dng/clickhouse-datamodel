@@ -118,7 +118,7 @@ class App(QMainWindow):
         self.result_query.setAcceptDrops(True)
         self.createButton = QPushButton('QUERY')
         self.createButton.setShortcut('Ctrl+Q')
-        self.createButton.clicked.connect(self.create_table)
+        self.createButton.clicked.connect(self.create_query)
         self.reverseButton = QPushButton('REVERSE')
         self.reverseButton.setShortcut('Ctrl+R')
         self.reverseButton.clicked.connect(self.reverse)
@@ -186,7 +186,7 @@ class App(QMainWindow):
         self.scrollLayout.removeRow(self.scrollWidget.children()[-1])
 
     ## Footer Functions
-    def create_table(self):
+    def create_query(self):
         _new_tab = Tables(name=self.entry_tab.text(),
                           database=self.entry_db.text(),
                           cluster=self.entry_cluster.text())
@@ -241,6 +241,7 @@ class App(QMainWindow):
         ## Columns
         for i in range(self.scrollLayout.count()):
             self.rmvColumn()
+
         # Adding new info (Reverse query)
         ## DB & TABLE & CLUSTER
         first_row_elements = rows_in_txt[0].split(' ')
@@ -318,6 +319,7 @@ class App(QMainWindow):
             if 'Nullable(' in col_elements[1]:
                 self._column._nullable.setChecked(1)
                 self._column._entry_datatype.setCurrentText(query_rmv_func(col_elements[1])[0])
+            # TODO: adding datatype function parser (where Nullable inside a function)
             elif '(' in col_elements[1]:
                 datatype = query_rmv_func(col_elements[1])[0]
                 datatype_func = query_rmv_func(col_elements[1])[1]

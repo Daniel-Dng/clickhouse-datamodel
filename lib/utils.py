@@ -1,4 +1,8 @@
 import re
+from lib.extractors import Extractor
+
+data_type_options = list(Extractor.txt_to_dict('assets', 'data_type_families.txt').file.keys())
+data_type_options.sort()
 
 
 def query_add_func(obj, func):
@@ -14,11 +18,16 @@ def query_add_func(obj, func):
 
 def query_rmv_func(obj_with_func):
     if (obj_with_func != '') & ('(' in obj_with_func) & (')' in obj_with_func):
-        obj = re.findall('\((.*)\)', obj_with_func)[0]
-        func = re.findall('(.*)\(', obj_with_func)[0]
+        # obj = re.findall('\((.*)\)', obj_with_func)[0]
+        # func = re.findall('(.*)\(', obj_with_func)[0]
+        obj = re.search("\((.*)\)", obj_with_func).group(1)
+        func = re.findall("^[^\(]+", obj_with_func)[0]
+        if (func in data_type_options) & (func != 'Nullable'):
+            obj = obj_with_func
+            func = ''
     return obj, func
 
-# print(query_rmv_func('func(nullable(obj))'))
+# print(query_rmv_func('Decimal(4)'))
 # TODO: need opti
 
 
