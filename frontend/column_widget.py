@@ -11,7 +11,7 @@ class ColumnWidget(QWidget):
         super(ColumnWidget, self).__init__(parent)
         # 1st group of widgets + layout
         self.col_name_label = QLabel('Column Name:')
-        self.col_name_label.setFixedSize(80, 20)
+        self.col_name_label.setFixedSize(70, 20)
         self.col_name_label.setAlignment(Qt.AlignRight)
         self._entry_col = QLineEdit()
         self._entry_col.setObjectName('col_name')
@@ -28,6 +28,13 @@ class ColumnWidget(QWidget):
         self._entry_datatype.setEditable(True)
         # self._entry_datatype.setFixedSize(100, 20)
         self._entry_datatype.currentTextChanged.connect(self.make_col)
+
+        self._datatype_param = QLabel('Data Type Params:')
+        self._datatype_param.setFixedSize(100, 20)
+        self._datatype_param.setAlignment(Qt.AlignRight)
+        self._entry_datatype_param = QLineEdit()
+        self._entry_datatype_param.setFixedSize(100, 20)
+        self._entry_datatype_param.textChanged.connect(self.make_col)
 
         self._func = QLabel('Function:')
         self._func.setFixedSize(80, 20)
@@ -55,6 +62,8 @@ class ColumnWidget(QWidget):
         hlayout1.addWidget(self._entry_col, alignment=Qt.AlignLeft)
         hlayout1.addWidget(self._datatype, alignment=Qt.AlignRight)
         hlayout1.addWidget(self._entry_datatype, alignment=Qt.AlignLeft)
+        hlayout1.addWidget(self._datatype_param, alignment=Qt.AlignRight)
+        hlayout1.addWidget(self._entry_datatype_param, alignment=Qt.AlignLeft)
         hlayout1.addWidget(self._func, alignment=Qt.AlignRight)
         hlayout1.addWidget(self._entry_func, alignment=Qt.AlignLeft)
         hlayout1.addWidget(self._codec, alignment=Qt.AlignRight)
@@ -129,6 +138,7 @@ class ColumnWidget(QWidget):
         is_nullable = 1 if self._nullable.isChecked() else 0
         self.new_col = Columns(col_name=self._entry_col.text(),
                                data_type=self._entry_datatype.currentText(),
+                               data_type_param=self._entry_datatype_param.text(),
                                nullable=is_nullable,
                                function=self._entry_func.text(),
                                codec=self._entry_codec.text())

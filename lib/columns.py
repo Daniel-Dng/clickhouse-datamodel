@@ -3,17 +3,18 @@ from lib.tables import Tables
 
 
 class Columns(Tables):
-    def __init__(self, col_name, data_type, nullable=0, function='', codec=''):
+    def __init__(self, col_name, data_type, data_type_param='', nullable=0, function='', codec=''):
         self.col_name = col_name
         self.function = function
         self.codec = 'CODEC(' + codec + ')' if codec != '' else codec
         self.nullable = nullable
-        self.data_type = data_type if nullable == 0 else query_add_func(data_type, 'Nullable')
+        self.data_type = data_type if data_type_param == '' else data_type + '(' + data_type_param + ')'
+        self.data_type = self.data_type if nullable == 0 else query_add_func(self.data_type, 'Nullable')
         self.data_type = self.data_type if function == '' else query_add_func(self.data_type, function)
 
     def __str__(self):
         return f"{self.col_name} " \
-               f"{self.data_type} " \
+               f"{self.data_type}" \
                f"{self.codec} "
 
     def add_function(self, function):
