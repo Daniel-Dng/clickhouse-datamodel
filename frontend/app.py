@@ -17,9 +17,9 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'ClickHouse Query Builder'
-        self.left = 200
+        self.left = 150
         self.top = 50
-        self.width = 1100
+        self.width = 1200
         self.height = 650
         # self.i = 40
         # self.j = 80
@@ -93,8 +93,8 @@ class App(QMainWindow):
         header_layout.addWidget(self.ttl_label, 1, 8)
         header_layout.addWidget(self.entry_ttl, 1, 9)
 
-        header_layout.addWidget(self.addColButton, 2, 8, alignment=Qt.AlignCenter)
-        header_layout.addWidget(self.rmvColButton, 2, 9, alignment=Qt.AlignCenter)
+        header_layout.addWidget(self.addColButton, 2, 9, alignment=Qt.AlignCenter)
+        header_layout.addWidget(self.rmvColButton, 3, 9, alignment=Qt.AlignCenter)
 
         # BODY
         ## Column scrollArea
@@ -309,7 +309,6 @@ class App(QMainWindow):
         if 'TTL' in rows_in_txt[-2]:
             engine_ttl = re.findall('TTL (.*?) ', rows_in_txt[-2])[0]
             self.entry_ttl.setText(engine_ttl)
-
 
         ## COLUMNS
         for col_rows in rows_in_txt[2:(len(rows_in_txt) - 3)]:
